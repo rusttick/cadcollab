@@ -1,7 +1,7 @@
 # Ondsel-Server Issue #48: What They're Actually Trying to Solve, and the Standards That Already Solve It
 
 Purpose: read `Ondsel-Server` issue #48 closely (a local copy is at
-[`ondsel-server-issue-48.md`](ondsel-server-issue-48.md); the live thread is
+[`ondsel_server_issue_48.md`](ondsel_server_issue_48.md); the live thread is
 [FreeCAD/Ondsel-Server#48](https://github.com/FreeCAD/Ondsel-Server/issues/48)), understand what Lens is and what its
 maintainers are actually reaching for underneath the vocabulary they're inventing in real time, then map that onto
 Asset Administration Shell (AAS) and adjacent international-standards work already surveyed in
@@ -230,7 +230,7 @@ Ranked by how directly each maps onto something already said in the thread:
 - [BIM Collaboration Format — Wikipedia](https://en.wikipedia.org/wiki/BIM_Collaboration_Format)
 - [`possible_agile_manufacturing.md`](../co-edit-stream/doc/possible_agile_manufacturing.md) (this project's earlier AAS/IEC 81346/ISO 15926 survey)
 - [`possible_data_architecture.md`](../co-edit-stream/doc/possible_data_architecture.md) (this project's earlier content-addressed-history/CRDT research)
-- [`ondsel-server-issue-48.md`](ondsel-server-issue-48.md) (local copy of the issue text used for this research)
+- [`ondsel_server_issue_48.md`](ondsel_server_issue_48.md) (local copy of the issue text used for this research)
 
 ## Cross-reference
 

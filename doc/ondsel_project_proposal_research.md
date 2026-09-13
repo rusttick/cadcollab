@@ -8,7 +8,7 @@ built, but only as a sequence of small, separately-shippable decisions, each one
 the one before it — not as a single "adopt AAS" rewrite. This document maps that sequence as an explicit decision
 tree, stage by stage, so the branch count is visible rather than hidden inside a single vague roadmap item.
 
-This builds directly on [`ondsel-48-research.md`](ondsel-48-research.md) (what Lens is, what issue #48 is actually
+This builds directly on [`ondsel_48_research.md`](ondsel_48_research.md) (what Lens is, what issue #48 is actually
 asking for, which standards answer which gap) and the earlier cross-project research in
 [`possible_agile_manufacturing.md`](../co-edit-stream/doc/possible_agile_manufacturing.md) and
 [`possible_data_architecture.md`](../co-edit-stream/doc/possible_data_architecture.md). It does not repeat the
@@ -177,7 +177,7 @@ issue** (*"storing an item as a sub-directory in a workspace"*).
 - *Risk:* directories are already reused for organizational structure unrelated to parts (arbitrary folders of
   arbitrary files); conflating "a folder" with "a part's identity" risks exactly the kind of schema regret the
   earlier research (Krahn et al., "A Manifesto for Semantic Model Differencing" — cited in
-  `optimistic-locking-research.md`) warns about: a generic structural concept (a folder) standing in for a
+  `optimistic_locking_research.md`) warns about: a generic structural concept (a folder) standing in for a
   domain-meaningful one (a part) breaks the moment someone's folder-per-part convention isn't followed.
 
 **Branch 3 — Item as an AAS submodel served by a companion Eclipse BaSyx instance; Mongo only caches a summary.**
@@ -223,7 +223,7 @@ the existing `groupsOrUsers`/summary-array pattern already used throughout the c
   Lens's `Item` links, versus whatever the actual FreeCAD file's `App::Link` graph says. These *will* drift —
   someone edits the FreeCAD assembly, forgets (or has no obvious way) to update the Lens-side link declaration, and
   now Lens's PDM view of the assembly lies about what the file actually contains. This is precisely the "syntactic
-  vs. semantic" conflict-taxonomy problem surveyed in `optimistic-locking-research.md` §2 (Hepworth's dissertation) —
+  vs. semantic" conflict-taxonomy problem surveyed in `optimistic_locking_research.md` §2 (Hepworth's dissertation) —
   except here it's not even a *merge* conflict, it's a standing, silent divergence between two independently-edited
   representations of the same fact.
 
@@ -326,7 +326,7 @@ reference, exactly per the standard.
 - *Risk:* this is new *design* work, not just new *schema* work — AAS's spec describes the relationship but
   deliberately doesn't prescribe exactly how a type's parameters propagate to instances, or what happens when an
   instance has been locally modified and then the type changes underneath it (a real conflict-resolution question,
-  squarely in the territory `optimistic-locking-research.md` surveys — this is a place where that literature's
+  squarely in the territory `optimistic_locking_research.md` surveys — this is a place where that literature's
   syntactic/semantic conflict taxonomy becomes directly actionable, not just background reading). Attempting this
   before Stage 1–3 have been used in production risks building the most speculative part of the whole tree first.
 
@@ -482,7 +482,7 @@ standards-complete branch later — not to pick the "best" architecture up front
 
 ## Sources
 
-Standards and prior-art sources are the same as [`ondsel-48-research.md`](ondsel-48-research.md)'s Sources section
+Standards and prior-art sources are the same as [`ondsel_48_research.md`](ondsel_48_research.md)'s Sources section
 and are not repeated here; this document adds no new external sources beyond those already cited there, and instead
 cites specific files inside the cloned `Ondsel-Server` repository, listed inline above at each point they inform a
 decision:
@@ -497,8 +497,8 @@ decision:
 
 ## Cross-reference
 
-This document is the implementation-feasibility follow-through on [`ondsel-48-research.md`](ondsel-48-research.md)'s
+This document is the implementation-feasibility follow-through on [`ondsel_48_research.md`](ondsel_48_research.md)'s
 §4 proposed responses and on [`possible_freecad_collaboration.md`](possible_freecad_collaboration.md)'s ranked
 contribution targets. It intentionally does not repeat the standards descriptions or the conflict-taxonomy research
-from [`optimistic-locking-research.md`](optimistic-locking-research.md) — it cites them at the specific points
+from [`optimistic_locking_research.md`](optimistic_locking_research.md) — it cites them at the specific points
 (Stage 2, Stage 4) where they become directly actionable rather than background context.
