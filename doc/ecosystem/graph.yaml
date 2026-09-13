@@ -284,7 +284,7 @@ nodes:
     type: project
     name: "FreePDM"
     category: [pdm]
-    technical_approach: [custom-filesystem-permissions]
+    technical_approach: [custom-filesystem-permissions, sql-database]
     status: revived
     status_as_of: "2025-02-18"
     scope: freecad-native
@@ -293,6 +293,22 @@ nodes:
     license: "MIT"
     first_seen: "2022-04-28"
     source_doc: "freecad_pdm_plm_ecosystem_census.md §10.1, §16"
+    correction: >
+      technical_approach corrected 2026-09-13 after a source-level read
+      (doc/architecture/freepdm.md): the existing
+      custom-filesystem-permissions tag correctly describes the working
+      FileList.csv/container-number vault index (internal/vault/localfs),
+      but a real, separately-configured GORM ORM backend over SQLite
+      (dev/test) or PostgreSQL (production) also exists
+      (internal/db/init.go) — added sql-database since both are
+      genuinely present, not alternatives. That same read found the
+      project's actual locking/versioning domain logic
+      (internal/ports/locks, internal/domain/models/version.go,
+      internal/db/item.go's checkin/checkout/release-state methods) is
+      a well-designed but entirely unimplemented interface layer as of
+      this snapshot — no adapter implements locks.Service anywhere in
+      the repo, and item.go's core methods are empty stubs. Worth
+      treating as a design-only reference, not working code.
 
   # ---------------------------------------------------------------------
   # Organizations
@@ -352,7 +368,7 @@ nodes:
     type: project
     name: "Ondsel-Server (Lens)"
     category: [pdm, cloud-sharing, real-time-collab]
-    technical_approach: [sql-database, server-checkin-checkout]
+    technical_approach: [nosql-database, server-checkin-checkout]
     status: active
     status_as_of: "2026-09-13"
     scope: freecad-native
@@ -361,20 +377,39 @@ nodes:
     license: "AGPL-3.0"
     first_seen: unknown
     source_doc: "freecad_pdm_plm_ecosystem_census.md §10.1"
+    correction: >
+      technical_approach was originally recorded as [sql-database, ...]
+      from prose-only census sources; a source-level architecture read
+      (doc/architecture/ondsel-server.md, 2026-09-13) confirms the
+      backend is Node.js/Feathers.js over MongoDB (@feathersjs/mongodb,
+      embedded-array version schemas idiomatic to a document store), not
+      a relational database. Corrected to nosql-database here.
 
   - id: project:ondsel-lens-addon
     type: project
     name: "Ondsel-Lens-Addon"
     category: [cloud-sharing]
-    technical_approach: [other]
+    technical_approach: [server-checkin-checkout]
     status: active
     status_as_of: "2026-09-13"
     scope: freecad-native
     origin_country: unknown
     origin_language: unknown
-    license: unknown
+    license: "LGPL-2.0-or-later"
     first_seen: unknown
     source_doc: "freecad_pdm_plm_ecosystem_census.md §10.3"
+    correction: >
+      license and technical_approach corrected 2026-09-13 after a
+      source-level read (doc/architecture/ondsel-lens-addon.md): SPDX
+      headers throughout confirm LGPL-2.0-or-later; technical_approach
+      changed from [other] to [server-checkin-checkout] to match
+      project:ondsel-server's own tag, since this addon is precisely a
+      check-in/check-out client against that backend. That same read
+      found this client adds a real, if soft, conflict mitigation
+      (a FileStatus-gated confirm-before-overwrite dialog) that the
+      Ondsel-Server backend alone does not have — see that project's
+      architecture note for the backend-only finding, and this one for
+      the fuller picture once the client is included.
 
   - id: discussion:ondsel-server-48
     type: discussion
@@ -391,15 +426,28 @@ nodes:
     type: project
     name: "nanoPLM"
     category: [plm]
-    technical_approach: unknown
+    technical_approach: [sql-database]
     status: active
     status_as_of: "2025-07-21"
     scope: freecad-native
-    origin_country: unknown
+    origin_country: "DE"
     origin_language: unknown
-    license: unknown
+    license: "MIT"
     first_seen: unknown
     source_doc: "freecad_pdm_plm_ecosystem_census.md §10.1, §10.9"
+    correction: >
+      technical_approach, license, and origin_country corrected
+      2026-09-13 after a source-level read (doc/architecture/nanoplm.md):
+      confirmed Flask-SQLAlchemy over SQLite (technical_approach),
+      LICENSE file header (MIT), and the README's own German business
+      contact address (origin_country DE). That same read found the
+      project's real distinguishing feature is not PDM
+      versioning/concurrency (both are essentially absent — no
+      revision/lock concept anywhere in the schema or routes) but a
+      database-driven parametric-CAD configurator: freecad.py writes
+      product parameters directly into a shared FreeCAD template's
+      Spreadsheet object and auto-generates STL/STEP/PDF derivatives —
+      a pattern no other project in this census attempts.
 
   - id: project:freebom
     type: project
@@ -433,15 +481,28 @@ nodes:
     type: project
     name: "OpenPartsLibrary (+ Flask/packages/website variants)"
     category: [bom, pdm]
-    technical_approach: unknown
+    technical_approach: [sql-database]
     status: active
     status_as_of: "2026-09-13"
     scope: multi-cad-platform
     origin_country: unknown
     origin_language: unknown
-    license: unknown
+    license: "AGPL-3.0"
     first_seen: unknown
     source_doc: "freecad_pdm_plm_ecosystem_census.md §10.4, §10.9"
+    correction: >
+      license and technical_approach were originally unknown from
+      prose-only census sources; a source-level architecture read
+      (doc/architecture/openpartslibrary.md, 2026-09-13) confirms the
+      LICENSE file is full AGPL-3.0 text, and the backend is a Flask app
+      over SQLAlchemy/SQLite (db.py). Deliberately NOT tagged
+      server-checkin-checkout: the same read found no version history,
+      lock, or lifecycle-enforcement mechanism at all (single cad_file_id
+      per Component, free-text revision/lifecycle_state columns) — this
+      is a single-writer reference catalog, not a concurrent-editing PDM
+      system, unlike what that tag would imply. The `pdm` category tag is
+      also arguable on the same evidence but left uncorrected pending a
+      taxonomy-level review, not a factual error.
 
   - id: project:pypdm
     type: project
@@ -720,28 +781,58 @@ nodes:
     scope: freecad-native
     origin_country: FR
     origin_language: FR
-    license: unknown
+    license: "GPL-2.0"
     first_seen: unknown
     note: "Announced by its own developer in a French-language LinuxFr.org post, 2023-02-09 ('Petit PLM')."
     source_doc: "freecad_pdm_plm_ecosystem_census.md §10.1, §12.1"
+    correction: >
+      license corrected 2026-09-13 after a source-level read
+      (doc/architecture/taack-plm.md): the LICENSE file is GPLv2. That
+      same read found this FreeCAD-side repo is a thin Protobuf-based
+      transport client only (194 lines) — most PDM behavior
+      (versioning, comments, status, history) lives in a separate,
+      undownloaded server repo (github.com/Taack/plm) not covered by
+      this plan's repository list. One notable client-side design
+      choice: identity is FreeCAD's own native Document.Uid rather than
+      a separately manufactured ID, unlike every other project in this
+      census.
 
   - id: project:cadbaselibrary
     type: project
     name: "CADBaseLibrary (mnnxp/cadbaselibrary-freecad + gitlab.com/cadbase)"
     category: [pdm, bom, cloud-sharing]
-    technical_approach: [other]
+    technical_approach: [sql-database, server-checkin-checkout]
     status: active
     status_as_of: "2026-09-13"
-    scope: freecad-native
+    scope: multi-cad-platform
     origin_country: RU
     origin_language: RU
-    license: unknown
+    license: "mixed: LGPL-3.0 (cadbaselibrary-freecad, cadbaselibrary-blender clients), AGPL-3.0 (cdbs-back), PostgreSQL License (cdbs-migrations)"
     first_seen: "2018"
     note: >
       Real development repo is on GitLab (gitlab.com/cadbase), not GitHub —
       the GitHub repo is only the FreeCAD-side addon/mirror. Confirmed
       Russian origin via a 2023 Habr.com article.
     source_doc: "freecad_pdm_plm_ecosystem_census.md §10.1, §12.2"
+    correction: >
+      technical_approach, scope, and license corrected 2026-09-13 after
+      a five-repo source-level read
+      (doc/architecture/cadbaselibrary.md): the plan's own repo list
+      named only the FreeCAD client, but the full product spans
+      cadbaselibrary-freecad, cadbaselibrary-blender, cdbs-back (Rust/
+      Actix/GraphQL/Diesel), cdbs-migrations (PostgreSQL schema), and
+      three-libs (web-viewer assets). technical_approach was [other]
+      (no real backend confirmed); now [sql-database,
+      server-checkin-checkout]. scope was freecad-native; now
+      multi-cad-platform, since FreeCAD and Blender clients share an
+      (almost byte-for-byte identical) client module against the same
+      backend. license was unknown; the product uses three different
+      licenses across its repos, recorded above rather than picking one.
+      Also flagged but NOT corrected: first_seen "2018" predates
+      cdbs-migrations' earliest real schema migration (2021-06-29) —
+      may reflect the company/domain's founding date from the original
+      prose source rather than this codebase's age; left as-is pending
+      a check of what first_seen is meant to track.
 
   - id: project:pdmworkbench-zhurbav
     type: project
@@ -860,7 +951,7 @@ nodes:
     type: project
     name: "versioncontrol-workbench (p-friedrich/versioncontrol-workbench)"
     category: [version-control]
-    technical_approach: unknown
+    technical_approach: [other]
     status: dead
     status_as_of: "2018-09-26"
     scope: freecad-native
@@ -869,6 +960,19 @@ nodes:
     license: "none declared"
     first_seen: "2018-07-20"
     source_doc: "freecad_pdm_plm_ecosystem_census.md §10.2"
+    correction: >
+      technical_approach was originally unknown from prose-only census
+      sources; a source-level read
+      (doc/architecture/versioncontrol-workbench-pfriedrich.md,
+      2026-09-13) confirms this tool implements no VCS directly — it's a
+      folder-structure/JSON-translation utility supporting git AND a
+      proprietary tool (LoCo) equally, so [other] fits better than
+      [git]. That same read also flags a likely date inconsistency:
+      this node's first_seen (2018-07-20) is 12 days after
+      project:freecad-git-tryout-levity0815's first_seen (2018-07-08),
+      despite that project documenting active use of this one's
+      open_from_folder.py script from the start — not resolved here,
+      flagged for a future graph-consistency pass.
 
   - id: project:freecad-git-tryout-levity0815
     type: project
@@ -895,10 +999,18 @@ nodes:
     scope: freecad-native
     origin_country: unknown
     origin_language: unknown
-    license: unknown
+    license: "LGPL-3.0"
     first_seen: "2018"
     note: "Empty scaffold, part of the cadracks-project cluster, §10.7."
     source_doc: "freecad_pdm_plm_ecosystem_census.md §10.2, §10.7"
+    correction: >
+      license was originally unknown from prose-only census sources; a
+      source-level read (doc/architecture/cadracks-freecad-workbench-git.md,
+      2026-09-13) confirms the LICENSE file is full LGPLv3 text. That
+      same read also found the repo is code-empty but not content-empty
+      — a real, dated single-author design spec exists
+      (specs/freecad_workbench_git_specs.odt) and was read in full; the
+      existing "Empty scaffold" note remains accurate regarding code.
 
   - id: project:freecad-parts-library
     type: project
@@ -992,7 +1104,7 @@ nodes:
     scope: multi-cad-platform
     origin_country: unknown
     origin_language: unknown
-    license: unknown
+    license: "mixed: LGPL-3.0-or-later (plm foundation module), AGPL-3.0-or-later (all 35 other modules)"
     first_seen: "2017-10-07"
     note: >
       152 stars, highest of any platform-level PLM in the census. Presented
@@ -1002,6 +1114,19 @@ nodes:
       thread researched — see aware_of_uncoordinated-adjacent finding in
       results doc.
     source_doc: "freecad_pdm_plm_ecosystem_census.md §10.5"
+    correction: >
+      license corrected 2026-09-13 after a source-level read
+      (doc/architecture/odooplm.md): confirmed via plm/__manifest__.py
+      ("license": "LGPL-3") and CLAUDE.md's description of a
+      CI-enforced (check-licensing pre-commit hook) split between the
+      LGPL-3 plm foundation module and AGPL-3-or-later for all other
+      modules — no single SPDX value fits. That same read found the
+      most complete revision model in this census (a shared
+      revision.plm.mixin with genuine branch/sub-revision support, not
+      just linear versioning) and the strongest concurrency guarantee
+      found anywhere here: plm.checkout enforces one-checkout-per-
+      document via a database-level UNIQUE constraint, not just
+      application logic.
 
   - id: project:cadracks-openplm
     type: project
@@ -1147,7 +1272,7 @@ nodes:
     scope: multi-cad-platform
     origin_country: US
     origin_language: EN
-    license: unknown
+    license: "CC-BY-SA-4.0"
     first_seen: "2026-09-07"
     note: >
       Schema-driven, validated, versioned part-library: parts -> modules ->
@@ -1155,6 +1280,14 @@ nodes:
       Server#48's own part/assembly/sub-assembly vocabulary, arrived at
       completely independently — see independently_reinvents edge below.
     source_doc: "freecad_pdm_plm_ecosystem_census.md §10.10"
+    correction: >
+      license was originally recorded as unknown from prose-only census
+      sources; a source-level architecture read
+      (doc/architecture/ose-vcs-library.md, 2026-09-13) confirms
+      LICENSE.md states content is CC-BY-SA-4.0 (per the OSE License for
+      hardware documentation) unless otherwise noted per entry. Corrected
+      here; a separate code-specific license was not independently
+      confirmed and may warrant a follow-up check of pyproject.toml.
 
   - id: project:ose-library-workbench
     type: project
@@ -1294,16 +1427,21 @@ nodes:
     scope: freecad-native
     origin_country: unknown
     origin_language: unknown
-    license: unknown
+    license: "MIT"
     first_seen: "2026-05-04"
     source_doc: "freecad_pdm_plm_ecosystem_census.md §11.4"
+    correction: >
+      license was originally unknown from prose-only census sources; a
+      source-level architecture read
+      (doc/architecture/freecad-cloud-browser-hitclawagent.md,
+      2026-09-13) confirms both README.md and LICENSE state MIT.
 
   - id: project:freecad-cloud-browser-sabi137032
     type: project
     name: "freecad-cloud-browser (sabi137032/freecad-cloud-browser)"
     category: [cloud-sharing]
     technical_approach: [other]
-    status: active
+    status: dead
     status_as_of: "2026-09-13"
     scope: freecad-native
     origin_country: unknown
@@ -1312,6 +1450,28 @@ nodes:
     first_seen: "2026-05-07"
     note: "Same name, overlapping feature set as hitclawagent's repo, created 3 days later, no visible relationship between the authors."
     source_doc: "freecad_pdm_plm_ecosystem_census.md §11.4"
+    security_note: >
+      SECURITY FINDING (2026-09-13, doc/architecture/freecad-cloud-browser-sabi137032.md):
+      a source-level read found strong evidence this repo is a
+      malware-distribution decoy, not an honest independent project.
+      LICENSE still attributes copyright to hitclawagent (the sibling
+      repo's author), contradicting this node's own "no visible
+      relationship between the authors" note. The README describes
+      Google Drive/Dropbox OAuth features that do not exist anywhere in
+      the actual source (providers/__init__.py registers only s3/ftp/
+      webdav). The README's primary "Download Here" link points not to
+      a GitHub Release but to ui/browser-freecad-cloud-v1.9.zip, checked
+      into the repo itself; that zip's contents (listed, NOT extracted
+      or executed) are Application.bat, an implausibly large lsp.txt,
+      lua51.dll, and util64.exe — none of which relate to the Python
+      FreeCAD addon visible in the repo's own source tree. Status
+      corrected from "active" to "dead" and this security_note added
+      accordingly; not independently confirmed via malware scanning or
+      detonation. Do not download or run that zip or its contents.
+    corrected_status: >
+      status was originally "active"; corrected to "dead" given the
+      security finding above — the prior label implied a live,
+      legitimate tool, which this finding contradicts.
 
   # ---------------------------------------------------------------------
   # Projects — §12.3 international sweep
@@ -2011,19 +2171,41 @@ edges:
     confidence: inferred
     source: "freecad_pdm_plm_ecosystem_census.md §10.2"
 
-  - type: independently_reinvents
-    from: project:freecad-cloud-browser-hitclawagent
-    to: project:freecad-cloud-browser-sabi137032
+  - type: cites_as_prior_art
+    from: project:freecad-git-tryout-levity0815
+    to: project:versioncontrol-workbench-pfriedrich
     shared_idea: >
-      Same name, same feature category (cloud-storage-access workbench),
-      created three days apart (2026-05-04 / 2026-05-07), no visible
-      relationship between the authors — the third confirmed instance of
-      "duplicated effort within days, same name, no cross-awareness"
-      (after HistoryWorkbench-era git tools and the Schumbi freecad-plm
-      pair), suggesting this is a structural feature of the FreeCAD addon
-      ecosystem generally, not specific to PDM.
+      Not mere citation — a source-level read (doc/architecture/
+      freecad-git-tryout-levity0815.md, 2026-09-13) confirms this is a
+      direct functional dependency: the tryout repo's README documents
+      running versioncontrol-workbench's own scripts/open_from_folder.py
+      to open its multi-file linked assembly structure. No edge type in
+      this graph currently distinguishes "cites" from "actually requires
+      to run" — flagged here rather than left uncaptured; a future
+      schema pass may want a stronger depends_on-style type.
     confidence: confirmed
-    source: "freecad_pdm_plm_ecosystem_census.md §11.4"
+    source: "doc/architecture/freecad-git-tryout-levity0815.md"
+
+  - type: forked_from
+    from: project:freecad-cloud-browser-sabi137032
+    to: project:freecad-cloud-browser-hitclawagent
+    shared_idea: >
+      CORRECTED 2026-09-13 (was independently_reinvents, "no visible
+      relationship between the authors"): a source-level read
+      (doc/architecture/freecad-cloud-browser-sabi137032.md) found the
+      sabi137032 repo's own LICENSE still attributes copyright to
+      "hitclawagent" — direct evidence the source was copied from that
+      project, not independently written three days later as previously
+      assumed. This is now assessed as a security finding, not an
+      honest reinvention: sabi137032's repo embellishes the copied
+      code's README with fictional Google Drive/Dropbox features and
+      redirects its primary download link to a zip bundling an
+      unrelated Windows executable payload (Application.bat/lua51.dll/
+      util64.exe), not a build of the addon itself. See that
+      architecture note for full evidence; not independently confirmed
+      via malware scanning.
+    confidence: confirmed
+    source: "doc/architecture/freecad-cloud-browser-sabi137032.md"
 
   - type: independently_reinvents
     from: project:easypdm
