@@ -1,0 +1,2038 @@
+# Ecosystem relationship graph — Stage 3 full extraction
+#
+# Produced per doc/ecosystem_relationship_mapping_plan.md. Stage 1 (pilot)
+# covered the pieterhijma cluster, FreePDM, openPLM, Ondsel/Lens, and a
+# lighter pass on the alekssadowski95 cluster — see
+# doc/ecosystem_relationship_mapping_results.md for that history. Stage 3
+# extends the pilot to the full census (freecad_pdm_plm_ecosystem_census.md
+# + freecad_core_and_lens_collaboration_issues.md), section by section.
+# Stub-level facet treatment (mostly `unknown`) is used for single-commit
+# scaffolds and ruled-out/unresolved leads, per the plan's "Open Questions"
+# recommendation — full treatment for anything with real write-up.
+#
+# Every fact here is a pointer into the census docs — see `source_doc` /
+# `source` fields. Do not treat this file as a substitute for the prose; it
+# is a structure layered on top of it.
+#
+# Facet legend: `unknown` is used explicitly rather than omitting a facet.
+#
+# ---------------------------------------------------------------------------
+# Taxonomy v1 — FROZEN 2026-09-13 (Stage 2)
+# ---------------------------------------------------------------------------
+# This is the authoritative edge-type taxonomy as of the Stage 2 review that
+# followed the Stage 1 pilot. It supersedes (but the plan doc's own table is
+# kept as historical/pre-freeze context — see
+# doc/ecosystem_relationship_mapping_plan.md's "Typed edges" section, which
+# is now superseded by this block for the two changes below).
+#
+# Two changes made at freeze time, both driven directly by pilot findings
+# (see ecosystem_relationship_mapping_results.md's "Taxonomy-fit findings"):
+#
+#   1. NEW edge type `contributes_to` (person -> project): sustained
+#      non-authoring involvement — design feedback, advising, attempted-then-
+#      abandoned implementation work. Distinct from `same_author` ("created/
+#      drives") and `mentors` (GSoC-style guidance, scoped_to a project).
+#      Example: person:dan-miel -> project:freepdm.
+#
+#   2. NEW field `chose_instead` (free text) on `rejected_in_favor_of`, for
+#      the case where a project rejects prior art in favor of something
+#      bespoke rather than a named competing project. In that case `to` is
+#      `null` (not a fabricated project id), `reason` still explains why the
+#      prior art was rejected, and `chose_instead` explains what was built
+#      instead.
+#
+# All other edge types, and the general `confidence`/`source` requirement on
+# every edge, are unchanged from the plan doc's original taxonomy table:
+# same_author, cites_as_prior_art, rejected_in_favor_of, superseded_by,
+# independently_reinvents, aware_of_uncoordinated, shares_standard,
+# mentors/mentored_by, discussed_in, forked_from/mirror_of, contributes_to.
+#
+# Frozen for Stage 3 (full extraction pass, below). Not revisited mid-pass.
+# ---------------------------------------------------------------------------
+
+nodes:
+
+  # ---------------------------------------------------------------------
+  # People
+  # ---------------------------------------------------------------------
+
+  - id: person:pieterhijma
+    type: person
+    handles: {github: pieterhijma}
+    affiliations: ["NLnet-funded Lens/FreeCAD integration project"]
+    note: >
+      Sole driver of FreeCAD core's official collaboration effort: FEP-0011,
+      PR #26306, the #25681/#25682/#25685 issue cluster, PR #28312, and
+      FEP-0013 — five interlocking efforts.
+    source_doc: "freecad_core_and_lens_collaboration_issues.md §10.9 (cross-ref), §1-9"
+
+  - id: person:grd
+    type: person
+    handles: {forum: grd, github: grd}
+    real_name: "Gerard"
+    affiliations: []
+    note: "FreePDM's author/maintainer for its entire multi-year run (2022-2025+)."
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §16.1"
+
+  - id: person:jee-bee
+    type: person
+    handles: {forum: Jee-Bee, github: Jee-Bee}
+    note: >
+      grd's main early collaborator on FreePDM; wrote much of the initial
+      spec docs and maintained a parallel exploratory fork
+      (github.com/Jee-Bee/FreePDM/tree/conceptod).
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §16.1"
+
+  - id: person:dan-miel
+    type: person
+    handles: {forum: dan-miel, github: DanMiel}
+    note: >
+      Production SolidWorks-PDM administrator who joined the FreePDM thread
+      mid-2022, contributed real operational knowledge, tried to help code
+      it, then continued as a design-feedback contributor for years.
+      Confirmed to be the same person as DanMiel/PDMforFreeCAD
+      (github.com/DanMiel/PDMforFreeCAD), independently found in the GitHub
+      sweep as an "apparently abandoned trial" before the forum thread
+      revealed the fuller context.
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §16.1, §16.2 Phase 3"
+
+  - id: person:wmayer
+    type: person
+    handles: {github: wmayer, forum: wmayer}
+    real_name: "Werner Mayer"
+    note: "FreeCAD co-creator (alongside Jürgen Riegel and Yorik van Havre)."
+    source_doc: "freecad_core_and_lens_collaboration_issues.md §0; freecad_pdm_plm_ecosystem_census.md §16.1"
+
+  - id: person:jriegel
+    type: person
+    handles: {github: Jriegel, forum: jriegel}
+    real_name: "Jürgen Riegel"
+    note: "FreeCAD co-creator; filed the 2009 proto-PDM ticket #5539."
+    source_doc: "freecad_core_and_lens_collaboration_issues.md §0"
+
+  - id: person:yorikvanhavre
+    type: person
+    handles: {github: yorikvanhavre, forum: yorik}
+    real_name: "Yorik van Havre"
+    note: "FreeCAD co-creator; mentored the 2019 BCF plugin GSoC project."
+    source_doc: "freecad_core_and_lens_collaboration_issues.md §0, §7"
+
+  - id: person:podestplatz
+    type: person
+    handles: {github: podestplatz}
+    real_name: "Patrick Podest"
+    note: "GSoC 2019 student, author of BCF-Plugin-FreeCAD."
+    source_doc: "freecad_core_and_lens_collaboration_issues.md §7"
+
+  - id: person:hardeeprai
+    type: person
+    handles: {forum: hardeeprai}
+    note: "Co-mentor (with yorikvanhavre) of the 2019 BCF plugin GSoC project."
+    source_doc: "freecad_core_and_lens_collaboration_issues.md §7"
+
+  - id: person:ickby
+    type: person
+    handles: {github: ickby}
+    real_name: "Stefan Tröger"
+    note: >
+      Author of the now-archived CollaborativeFC/OCP real-time-collaboration
+      project; personally showed up in PR #26306's comments raising the
+      identity-verification question — a direct continuity between the
+      2020s real-time-editing era and the 2026 collaboration-framework
+      effort.
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §10.6; freecad_core_and_lens_collaboration_issues.md §8.5"
+
+  - id: person:alekssadowski95
+    type: person
+    handles: {github: alekssadowski95}
+    note: >
+      Built a 6-repo personal ecosystem (nanoPLM, FreeBOM,
+      we-have-PDM-at-home, OpenPartsLibrary + Flask/packages/website
+      variants, PyPDM) toward "PDM for small manufacturers," on a
+      high-output GitHub profile (70+ repos, many FreeCAD-related).
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §10.9"
+
+  - id: person:philippe-openplm
+    type: person
+    handles: {forum: "Philippe (ninoofr@laposte.net)"}
+    note: >
+      OpenPLM developer who posted the first-ever FreeCAD/PDM plugin
+      announcement to the FreeCAD forum in 2010.
+    source_doc: "freecad_core_and_lens_collaboration_issues.md §0"
+
+  # ---------------------------------------------------------------------
+  # Projects — pieterhijma cluster
+  # ---------------------------------------------------------------------
+
+  - id: project:fep-0011
+    type: project
+    name: "FEP-0011 Generic Collaboration Framework"
+    category: [pdm, real-time-collab]
+    technical_approach: [other]
+    status: active
+    status_as_of: "2026-09-13"
+    scope: freecad-native
+    origin_country: unknown
+    origin_language: unknown
+    license: "CC0-1.0 (the FEP document itself)"
+    first_seen: "2026-01-25"
+    source_doc: "freecad_core_and_lens_collaboration_issues.md §8.3"
+
+  - id: project:pr-26306
+    type: project
+    name: "Collaboration module (PR #26306)"
+    category: [pdm]
+    technical_approach: [other]
+    status: active
+    status_as_of: "2026-09-13"
+    scope: freecad-native
+    origin_country: unknown
+    origin_language: unknown
+    license: "LGPL-2.1 (FreeCAD core)"
+    first_seen: "2025-12-19"
+    source_doc: "freecad_core_and_lens_collaboration_issues.md §8.5"
+
+  - id: project:pr-28312
+    type: project
+    name: "Core: Improve FreeCAD file format for versioning (PR #28312)"
+    category: [version-control]
+    technical_approach: [git]
+    status: active
+    status_as_of: "2026-09-13"
+    scope: freecad-native
+    origin_country: unknown
+    origin_language: unknown
+    license: "LGPL-2.1 (FreeCAD core)"
+    first_seen: unknown
+    source_doc: "freecad_core_and_lens_collaboration_issues.md §9.1"
+
+  - id: project:fep-0013
+    type: project
+    name: "FEP-0013 Visual Diffs"
+    category: [version-control]
+    technical_approach: [other]
+    status: active
+    status_as_of: "2026-09-13"
+    scope: freecad-native
+    origin_country: unknown
+    origin_language: unknown
+    license: "CC0-1.0 (the FEP document itself)"
+    first_seen: "2026-08-19"
+    source_doc: "freecad_core_and_lens_collaboration_issues.md §9.2"
+
+  - id: project:issue-25681-cluster
+    type: project
+    name: "FreeCAD/FreeCAD#25681 'Core: Collaboration features' issue cluster (#25681, #25682, #25685, #23248)"
+    category: [pdm, real-time-collab]
+    technical_approach: [other]
+    status: active
+    status_as_of: "2026-09-13"
+    scope: freecad-native
+    origin_country: unknown
+    origin_language: unknown
+    license: "LGPL-2.1 (FreeCAD core)"
+    first_seen: "2025-11-26"
+    source_doc: "freecad_core_and_lens_collaboration_issues.md §1-4"
+
+  - id: project:bcf-plugin-freecad
+    type: project
+    name: "BCF Plugin for FreeCAD (podestplatz/BCF-Plugin-FreeCAD)"
+    category: [real-time-collab, bom]
+    technical_approach: [other]
+    status: dead
+    status_as_of: "2024-02-09"
+    scope: freecad-native
+    origin_country: unknown
+    origin_language: unknown
+    license: "LGPL-2.1"
+    first_seen: "2019-05-11"
+    source_doc: "freecad_core_and_lens_collaboration_issues.md §7"
+
+  # ---------------------------------------------------------------------
+  # Projects — FreePDM
+  # ---------------------------------------------------------------------
+
+  - id: project:freepdm
+    type: project
+    name: "FreePDM"
+    category: [pdm]
+    technical_approach: [custom-filesystem-permissions]
+    status: revived
+    status_as_of: "2025-02-18"
+    scope: freecad-native
+    origin_country: unknown
+    origin_language: unknown
+    license: "MIT"
+    first_seen: "2022-04-28"
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §10.1, §16"
+
+  # ---------------------------------------------------------------------
+  # Projects — openPLM lineage
+  # ---------------------------------------------------------------------
+
+  - id: project:openplm
+    type: project
+    name: "openPLM (amarh/openPLM)"
+    category: [plm]
+    technical_approach: [sql-database]
+    status: dead
+    status_as_of: "2024-01-30"
+    scope: multi-cad-platform
+    origin_country: FR
+    origin_language: FR
+    license: "GPL-3.0-or-later"
+    first_seen: "2010-09-14"
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §10.5"
+
+  # ---------------------------------------------------------------------
+  # Projects — Ondsel / Lens
+  # ---------------------------------------------------------------------
+
+  - id: project:ondsel-server
+    type: project
+    name: "Ondsel-Server (Lens)"
+    category: [pdm, cloud-sharing, real-time-collab]
+    technical_approach: [sql-database, server-checkin-checkout]
+    status: active
+    status_as_of: "2026-09-13"
+    scope: freecad-native
+    origin_country: unknown
+    origin_language: unknown
+    license: "AGPL-3.0"
+    first_seen: unknown
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §10.1"
+
+  - id: project:ondsel-lens-addon
+    type: project
+    name: "Ondsel-Lens-Addon"
+    category: [cloud-sharing]
+    technical_approach: [other]
+    status: active
+    status_as_of: "2026-09-13"
+    scope: freecad-native
+    origin_country: unknown
+    origin_language: unknown
+    license: unknown
+    first_seen: unknown
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §10.3"
+
+  - id: discussion:ondsel-server-48
+    type: discussion
+    name: "FreeCAD/Ondsel-Server#48 'Extent to which Lens is a PDM'"
+    platform: "GitHub issue"
+    status_as_of: "2026-09-13"
+    source_doc: "freecad_core_and_lens_collaboration_issues.md §5"
+
+  # ---------------------------------------------------------------------
+  # Projects — alekssadowski95 cluster (lighter treatment)
+  # ---------------------------------------------------------------------
+
+  - id: project:nanoplm
+    type: project
+    name: "nanoPLM"
+    category: [plm]
+    technical_approach: unknown
+    status: active
+    status_as_of: "2025-07-21"
+    scope: freecad-native
+    origin_country: unknown
+    origin_language: unknown
+    license: unknown
+    first_seen: unknown
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §10.1, §10.9"
+
+  - id: project:freebom
+    type: project
+    name: "FreeBOM"
+    category: [bom]
+    technical_approach: unknown
+    status: unknown
+    status_as_of: "2026-09-13"
+    scope: multi-cad-platform
+    origin_country: unknown
+    origin_language: unknown
+    license: unknown
+    first_seen: unknown
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §10.4"
+
+  - id: project:we-have-pdm-at-home
+    type: project
+    name: "we-have-PDM-at-home"
+    category: [pdm]
+    technical_approach: [svn]
+    status: stalled
+    status_as_of: "2025-07-26"
+    scope: freecad-native
+    origin_country: unknown
+    origin_language: unknown
+    license: "MIT"
+    first_seen: "2025-07-26"
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §10.1"
+
+  - id: project:openpartslibrary
+    type: project
+    name: "OpenPartsLibrary (+ Flask/packages/website variants)"
+    category: [bom, pdm]
+    technical_approach: unknown
+    status: active
+    status_as_of: "2026-09-13"
+    scope: multi-cad-platform
+    origin_country: unknown
+    origin_language: unknown
+    license: unknown
+    first_seen: unknown
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §10.4, §10.9"
+
+  - id: project:pypdm
+    type: project
+    name: "PyPDM"
+    category: [pdm]
+    technical_approach: unknown
+    status: unknown
+    status_as_of: "2026-09-13"
+    scope: unknown
+    origin_country: unknown
+    origin_language: unknown
+    license: unknown
+    first_seen: unknown
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §10.9"
+
+  # ---------------------------------------------------------------------
+  # Discussion nodes
+  # ---------------------------------------------------------------------
+
+  - id: discussion:freecad-issue-5539
+    type: discussion
+    name: "FreeCAD/FreeCAD#5539 'Resource framework for FreeCAD' (Mantis ticket #19)"
+    platform: "GitHub issue (imported from Mantis)"
+    status_as_of: "2023-10-23 (closed)"
+    source_doc: "freecad_core_and_lens_collaboration_issues.md §0"
+
+  - id: discussion:about-pdm-for-freecad
+    type: discussion
+    name: "'About PDM for FreeCAD' forum thread (t=68350)"
+    platform: "forum.freecad.org"
+    span: "2022-04-28 to 2025-02-18, 156 posts"
+    status_as_of: "2025-02-18 (last post)"
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §16"
+
+  - id: discussion:fep-0011-discussion-40
+    type: discussion
+    name: "GitHub Discussion #40 'FEP-0011: Generic Collaboration Framework'"
+    platform: "GitHub Discussions"
+    status_as_of: "2026-08-02 (last comment)"
+    source_doc: "freecad_core_and_lens_collaboration_issues.md §8.6"
+
+  - id: discussion:bcf-gsoc-proposal-thread
+    type: discussion
+    name: "'BCF Support GSoC Proposal' forum thread (t=35465)"
+    platform: "forum.freecad.org"
+    status_as_of: "2019-08-24"
+    source_doc: "freecad_core_and_lens_collaboration_issues.md §7"
+
+  # ---------------------------------------------------------------------
+  # Standard nodes
+  # ---------------------------------------------------------------------
+
+  - id: standard:bcf
+    type: standard
+    name: "BIM Collaboration Format (BCF)"
+    maintainer: "buildingSMART"
+    source_doc: "freecad_core_and_lens_collaboration_issues.md §3.9, §8.3"
+
+  - id: standard:vdi-2770-aas
+    type: standard
+    name: "VDI 2770 / Asset Administration Shell (AAS) Handover Documentation submodel"
+    maintainer: "IDTA / VDI"
+    source_doc: "freecad_core_and_lens_collaboration_issues.md §5.1"
+
+  # =========================================================================
+  # STAGE 3 — full extraction. Everything below this line was added in the
+  # Stage 3 pass, extending the Stage 1 pilot above. Organized to mirror the
+  # census docs' own section structure.
+  # =========================================================================
+
+  # ---------------------------------------------------------------------
+  # More people (load-bearing for Stage 3 edges; not every commenter in the
+  # source docs gets a node — only those with same_author/contributes_to/
+  # independently_reinvents/mentors/cites_as_prior_art relationships)
+  # ---------------------------------------------------------------------
+
+  - id: person:pierreporte
+    type: person
+    handles: {github: pierreporte}
+    note: >
+      Co-developed the item/document/version/meta-document vocabulary with
+      pieterhijma on Ondsel-Server#48 (the "Extent to which Lens is a PDM"
+      discussion) — described by pieterhijma as making "a hard distinction
+      between 3D annotations and collaboration annotations."
+    source_doc: "freecad_core_and_lens_collaboration_issues.md §2.3, §5"
+
+  - id: person:creymore
+    type: person
+    handles: {github: Creymore}
+    note: >
+      Filed Ondsel-Server#47 (server-sync feature request); participated in
+      the #25682 annotations-vs-versioning discussion alongside pierreporte;
+      pointed pieterhijma to Ondsel-Server#48 in #25681.
+    source_doc: "freecad_core_and_lens_collaboration_issues.md §1.5, §2.3, §6"
+
+  - id: person:heda
+    type: person
+    handles: {forum: heda}
+    note: >
+      FreePDM thread's most consistent design-philosophy voice (flexible
+      data structures over fixed schemas, keep PDM tasks independent of
+      FreeCAD itself); created the official PDM_Roadmap wiki placeholder
+      page pointing back into the FreePDM thread.
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §16.1"
+
+  - id: person:zolko
+    type: person
+    handles: {forum: Zolko}
+    note: >
+      Brought real production experience (5-team Siemens NX/TeamCenter
+      project) to the FreePDM thread, arguing for pure-SVN/directory-
+      permission approaches over bespoke PDM software; directly challenged
+      grd's Phase 4 pivot to a bespoke filesystem as wheel-reinvention.
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §16.1, §16.2 Phase 4"
+
+  - id: person:user1234
+    type: person
+    handles: {forum: user1234}
+    note: >
+      Recurring FreePDM-thread debater on VCS choice ("git... the diffs
+      would be too big... not practical") and metadata/search requirements;
+      independently traced to a 2021 forum thread (thomas-neemann's sidecar-
+      file proposal) arguing the identical PostgreSQL-for-locking position
+      six months before FreePDM's own thread existed.
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §16.1, §16.2 Phase 1, §16.3a"
+
+  - id: person:wandererfan
+    type: person
+    handles: {github: WandererFan, forum: wandererfan}
+    note: >
+      FreeCAD core contributor. Appears twice, 6 years apart: in the 2017
+      forum thread pointing at the same "Resource_framework_project" wiki
+      page jriegel's 2014 responders had cited, and in 2023 closing ticket
+      #5539 itself ("Closed as replaced by Component Library").
+    source_doc: "freecad_core_and_lens_collaboration_issues.md §0"
+
+  - id: person:openfablab
+    type: person
+    handles: {forum: openfablab}
+    note: >
+      Posted a 2020 forum design for a UUID-based, filesystem-native PDM
+      (info.plm JSON sidecar files, UUID-not-path references) two years
+      before FreePDM existed — never referenced by grd or anyone in the
+      later FreePDM thread despite being posted to the same forum section.
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §16.3a"
+
+  - id: person:thomas-neemann
+    type: person
+    handles: {forum: thomas-neemann}
+    note: >
+      Posted a 2021 forum proposal pairing FreeCAD files with sidecar text
+      files holding searchable metadata, queried via the Linux `recoll`
+      tool; demoed with a video.
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §16.3a"
+
+  - id: person:vejmarie
+    type: person
+    handles: {forum: vejmarie}
+    note: >
+      Author of CADCloud, per the "Tracking FreeCAD collaboration tools"
+      forum thread (t=62080); publicly demoed CADCloud at justyour.parts.
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §16.3"
+
+  - id: person:eukreign
+    type: person
+    handles: {forum: eukreign}
+    note: >
+      Proposed a web-based FreeCAD collaboration platform (check-out/check-in
+      plus camera-position screen-sharing) in a 2014 forum thread; jriegel
+      replied with pointers to his own 2009-ticket-era wiki pages. No shipped
+      code resulted.
+    source_doc: "freecad_core_and_lens_collaboration_issues.md §0"
+
+  - id: person:malkov
+    type: person
+    handles: {forum: Malkov}
+    note: >
+      Proposed "a free enterprise level PLM/PDM system integrated with
+      FreeCAD" in a 2017 forum thread, citing Siemens Teamcenter experience
+      and proposing NoSQL architecture — the same database-technology debate
+      FreePDM's own thread reran from scratch five years later. No shipped
+      code resulted.
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §10.5; freecad_core_and_lens_collaboration_issues.md §0"
+
+  # ---------------------------------------------------------------------
+  # Projects — §10.1 Dedicated PDM/PLM systems/addons (remaining entries)
+  # ---------------------------------------------------------------------
+
+  - id: project:gitpdm
+    type: project
+    name: "GitPDM (nerd-sniped/GitPDM)"
+    category: [pdm, version-control]
+    technical_approach: [git]
+    status: active
+    status_as_of: "2026-07-26"
+    scope: freecad-native
+    origin_country: unknown
+    origin_language: unknown
+    license: "MIT"
+    first_seen: "2025-12-26"
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §10.1"
+
+  - id: project:easypdm
+    type: project
+    name: "EasyPDM (pawelcel/EasyPDM)"
+    category: [pdm, bom]
+    technical_approach: [other]
+    status: active
+    status_as_of: "2026-09-09"
+    scope: multi-cad-platform
+    origin_country: unknown
+    origin_language: unknown
+    license: "MIT"
+    first_seen: "2026-08-04"
+    note: >
+      README states the entire application was "written for me by Claude
+      (an AI model from Anthropic)" by an author self-described as a
+      mechanical design engineer, not a programmer. Features item-locking
+      (check-out), a recurring "lock, don't merge" pattern also seen in
+      Anchorpoint and the Omniverse connector's checkpoint model — see
+      independently_reinvents edges below.
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §10.1"
+
+  - id: project:pistock
+    type: project
+    name: "PiStock (pistock-org/PiStock)"
+    category: [plm, pdm]
+    technical_approach: [other]
+    status: active
+    status_as_of: "2026-07-04"
+    scope: freecad-native
+    origin_country: unknown
+    origin_language: unknown
+    license: "AGPL-3.0"
+    first_seen: "2026-05-25"
+    note: "Targets hobbyist/small-shop hardware (Raspberry Pi), not enterprise deployment."
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §10.1"
+
+  - id: project:cascadia-freecad-connector
+    type: project
+    name: "Cascadia-PLM/FreeCAD-Connector"
+    category: [pdm]
+    technical_approach: [other]
+    status: active
+    status_as_of: "2026-08-22"
+    scope: freecad-native
+    origin_country: unknown
+    origin_language: unknown
+    license: unknown
+    first_seen: "2026-08-21"
+    note: "FreeCAD-side bridge to the kernel-agnostic Cascadia-App PLM (project:cascadia-app)."
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §10.1, §13.1"
+
+  - id: project:cascadia-app
+    type: project
+    name: "Cascadia PLM / Cascadia-App"
+    category: [plm]
+    technical_approach: [other]
+    status: active
+    status_as_of: "2026-09-11"
+    scope: multi-cad-platform
+    origin_country: unknown
+    origin_language: unknown
+    license: "NOASSERTION (LICENSING.md present, not manually reviewed)"
+    first_seen: "2026-04-19"
+    note: "Kernel-agnostic 'Digital Thread' PLM app; general-purpose, not FreeCAD/OCCT-specific."
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §13.1"
+
+  - id: project:taack-plm
+    type: project
+    name: "Taack FreeCAD PLM (Taack/taack-plm-freecad)"
+    category: [plm]
+    technical_approach: [other]
+    status: active
+    status_as_of: "2026-09-13"
+    scope: freecad-native
+    origin_country: FR
+    origin_language: FR
+    license: unknown
+    first_seen: unknown
+    note: "Announced by its own developer in a French-language LinuxFr.org post, 2023-02-09 ('Petit PLM')."
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §10.1, §12.1"
+
+  - id: project:cadbaselibrary
+    type: project
+    name: "CADBaseLibrary (mnnxp/cadbaselibrary-freecad + gitlab.com/cadbase)"
+    category: [pdm, bom, cloud-sharing]
+    technical_approach: [other]
+    status: active
+    status_as_of: "2026-09-13"
+    scope: freecad-native
+    origin_country: RU
+    origin_language: RU
+    license: unknown
+    first_seen: "2018"
+    note: >
+      Real development repo is on GitLab (gitlab.com/cadbase), not GitHub —
+      the GitHub repo is only the FreeCAD-side addon/mirror. Confirmed
+      Russian origin via a 2023 Habr.com article.
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §10.1, §12.2"
+
+  - id: project:pdmworkbench-zhurbav
+    type: project
+    name: "PDMWorkbench (ZhurbaV/PDMWorkbench)"
+    category: [pdm]
+    technical_approach: unknown
+    status: dead
+    status_as_of: "2025-05-18"
+    scope: freecad-native
+    origin_country: unknown
+    origin_language: unknown
+    license: "none declared"
+    first_seen: "2025-05-18"
+    note: "Appears to be a single-commit scaffold; not independently verified beyond repo description."
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §10.1"
+
+  - id: project:pdmforfreecad-danmiel
+    type: project
+    name: "PDMforFreeCAD (DanMiel/PDMforFreeCAD)"
+    category: [pdm]
+    technical_approach: unknown
+    status: dead
+    status_as_of: "2022-11-28"
+    scope: freecad-native
+    origin_country: unknown
+    origin_language: unknown
+    license: unknown
+    first_seen: unknown
+    note: >
+      Small, apparently abandoned trial — but see person:dan-miel's
+      contributes_to edge to project:freepdm: this wasn't really abandoned,
+      it was folded into advising grd directly on FreePDM instead.
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §10.1, §16.1"
+
+  - id: project:schumbi-freecad-plm
+    type: project
+    name: "Schumbi/freecad-plm (+ freecad-plm-addon)"
+    category: [plm]
+    technical_approach: unknown
+    status: active
+    status_as_of: "2026-09-12"
+    scope: freecad-native
+    origin_country: unknown
+    origin_language: unknown
+    license: "none declared"
+    first_seen: "2026-07-17"
+    note: "Two-repo (core + addon) split PLM project, started and pushed within the same week as the census research."
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §10.1"
+
+  - id: project:fc-plm-ojo42
+    type: project
+    name: "fc-plm (ojo42/fc-plm)"
+    category: [plm]
+    technical_approach: unknown
+    status: dead
+    status_as_of: "2021-11-01"
+    scope: freecad-native
+    origin_country: unknown
+    origin_language: unknown
+    license: unknown
+    first_seen: unknown
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §10.1"
+
+  - id: project:cadracks-freecad-workbench-plm
+    type: project
+    name: "cadracks-project/freecad-workbench-plm"
+    category: [plm]
+    technical_approach: unknown
+    status: dead
+    status_as_of: "2018-08-23"
+    scope: freecad-native
+    origin_country: unknown
+    origin_language: unknown
+    license: unknown
+    first_seen: "2018"
+    note: "Empty scaffold (license file + empty specs/ dir); never built beyond that. Part of the cadracks-project cluster, §10.7."
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §10.1, §10.7"
+
+  # ---------------------------------------------------------------------
+  # Projects — §10.2 version control / git / visual diffing
+  # ---------------------------------------------------------------------
+
+  - id: project:historyworkbench
+    type: project
+    name: "HistoryWorkbench (eblanshey/HistoryWorkbench)"
+    category: [version-control]
+    technical_approach: [git]
+    status: active
+    status_as_of: "2026-09-01"
+    scope: freecad-native
+    origin_country: unknown
+    origin_language: unknown
+    license: "LGPL-2.1"
+    first_seen: "2026-05-05"
+    note: >
+      By far the highest-star project in the whole census (144 stars) —
+      strongest revealed-preference signal that the community's actual
+      demand is git-friendly diffing/history, not server-based PDM.
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §10.2, §10.8"
+
+  - id: project:freecad-gitproject-reox
+    type: project
+    name: "FreeCAD_gitproject (reox/FreeCAD_gitproject)"
+    category: [version-control]
+    technical_approach: [git]
+    status: dead
+    status_as_of: "2018-01-06"
+    scope: freecad-native
+    origin_country: unknown
+    origin_language: unknown
+    license: "LGPL-2.1"
+    first_seen: "2017-11-08"
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §10.2"
+
+  - id: project:versioncontrol-workbench-pfriedrich
+    type: project
+    name: "versioncontrol-workbench (p-friedrich/versioncontrol-workbench)"
+    category: [version-control]
+    technical_approach: unknown
+    status: dead
+    status_as_of: "2018-09-26"
+    scope: freecad-native
+    origin_country: unknown
+    origin_language: unknown
+    license: "none declared"
+    first_seen: "2018-07-20"
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §10.2"
+
+  - id: project:freecad-git-tryout-levity0815
+    type: project
+    name: "freecad_git_tryout (levity0815/freecad_git_tryout)"
+    category: [version-control]
+    technical_approach: [git]
+    status: dead
+    status_as_of: "2018-08-09"
+    scope: freecad-native
+    origin_country: unknown
+    origin_language: unknown
+    license: unknown
+    first_seen: "2018-07-08"
+    note: "Explicit experiment/prototype, one month of activity."
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §10.2"
+
+  - id: project:cadracks-freecad-workbench-git
+    type: project
+    name: "cadracks-project/freecad-workbench-git"
+    category: [version-control]
+    technical_approach: [git]
+    status: dead
+    status_as_of: "2018-08-23"
+    scope: freecad-native
+    origin_country: unknown
+    origin_language: unknown
+    license: unknown
+    first_seen: "2018"
+    note: "Empty scaffold, part of the cadracks-project cluster, §10.7."
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §10.2, §10.7"
+
+  - id: project:freecad-parts-library
+    type: project
+    name: "FreeCAD Parts Library / Component Library (FreeCAD/FreeCAD-library)"
+    category: [bom]
+    technical_approach: [other]
+    status: active
+    status_as_of: "2023-10-23"
+    scope: freecad-native
+    origin_country: unknown
+    origin_language: unknown
+    license: "LGPL-2.1 (FreeCAD ecosystem norm, not independently confirmed)"
+    first_seen: unknown
+    note: >
+      The real but much-narrowed answer ticket #5539 was closed in favor of
+      — a shared macro/part-file repository, no UUID scheme, no revision
+      control beyond git, no resource-discovery framework.
+    source_doc: "freecad_core_and_lens_collaboration_issues.md §0"
+
+  # ---------------------------------------------------------------------
+  # Projects — §10.3 Cloud CAD-sharing / hosted collaboration
+  # ---------------------------------------------------------------------
+
+  - id: project:cadcloud
+    type: project
+    name: "CADCloud (opencomputeproject/CADCloud)"
+    category: [cloud-sharing]
+    technical_approach: [other]
+    status: dead
+    status_as_of: "2022-01-12"
+    scope: freecad-native
+    origin_country: unknown
+    origin_language: unknown
+    license: unknown
+    first_seen: "2020-07-16"
+    note: >
+      Second-highest star count in the census (108). Ships a custom FreeCAD
+      0.19 build with a dedicated Cloud workbench, backed by S3. Designed
+      around an explicit git-fork-style federation feature for sharing
+      forkable mechanical parts.
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §10.3, §14.3"
+
+  - id: project:grabcad-workbench
+    type: project
+    name: "GrabCAD Workbench (Stratasys, commercial)"
+    category: [pdm, cloud-sharing]
+    technical_approach: [server-checkin-checkout]
+    status: dead
+    status_as_of: "2023-06-01"
+    scope: multi-cad-platform
+    origin_country: US
+    origin_language: EN
+    license: "proprietary"
+    first_seen: "2013"
+    note: >
+      Not FreeCAD-specific or open-source; included as commercial prior
+      art/context. Discontinued 2023-06-01 — cited in industry commentary
+      as a cautionary tale for "PLM for SMBs."
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §10.3"
+
+  # ---------------------------------------------------------------------
+  # Projects — §10.4 BOM / parts-library tooling
+  # ---------------------------------------------------------------------
+
+  - id: project:billofmaterials-wb
+    type: project
+    name: "BillOfMaterials-WB (APEbbers/BillOfMaterials-WB)"
+    category: [bom]
+    technical_approach: unknown
+    status: active
+    status_as_of: "2026-07-25"
+    scope: freecad-native
+    origin_country: unknown
+    origin_language: unknown
+    license: unknown
+    first_seen: unknown
+    note: "Listed in the official Addon Manager catalog."
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §10.4"
+
+  # ---------------------------------------------------------------------
+  # Projects — §10.5 / §13.1 ERP/PLM platform integrations
+  # ---------------------------------------------------------------------
+
+  - id: project:odooplm
+    type: project
+    name: "OdooPLM (OmniaGit/odooplm)"
+    category: [plm, pdm, bom]
+    technical_approach: [sql-database]
+    status: active
+    status_as_of: "2026-09-12"
+    scope: multi-cad-platform
+    origin_country: unknown
+    origin_language: unknown
+    license: unknown
+    first_seen: "2017-10-07"
+    note: >
+      152 stars, highest of any platform-level PLM in the census. Presented
+      at Odoo Experience 2025. Older, more active, and better-starred than
+      most FreeCAD-native PDM attempts, yet absent from FEP-0011's
+      Motivation "known initiatives" list and from every FreeCAD-org issue
+      thread researched — see aware_of_uncoordinated-adjacent finding in
+      results doc.
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §10.5"
+
+  - id: project:cadracks-openplm
+    type: project
+    name: "cadracks-project/openplm (\"OpenPLM revival\")"
+    category: [plm]
+    technical_approach: unknown
+    status: dead
+    status_as_of: "2018-08-17"
+    scope: freecad-native
+    origin_country: unknown
+    origin_language: unknown
+    license: unknown
+    first_seen: "2018-08-16"
+    note: "Created and abandoned within a single day. Part of the cadracks-project cluster, §10.7."
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §10.5, §10.7"
+
+  - id: project:openplm-cpg-retail
+    type: project
+    name: "openPLM/openplm (name collision — CPG/Retail PLM, unrelated)"
+    category: [plm]
+    technical_approach: unknown
+    status: unknown
+    status_as_of: "2026-01-16"
+    scope: unknown
+    origin_country: unknown
+    origin_language: unknown
+    license: unknown
+    first_seen: "2026-01-16"
+    note: >
+      Reused the "openPLM" name for an unrelated consumer-packaged-goods/
+      retail PLM — 0 stars, single commit. Recorded only to prevent future
+      confusion with project:openplm (the CAD-focused amarh/openPLM
+      lineage).
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §10.5"
+
+  - id: project:docdoku-plm
+    type: project
+    name: "DocDokuPLM (docdoku/docdoku-plm)"
+    category: [plm]
+    technical_approach: [sql-database]
+    status: unknown
+    status_as_of: "2026-09-13"
+    scope: multi-cad-platform
+    origin_country: unknown
+    origin_language: unknown
+    license: unknown
+    first_seen: unknown
+    note: >
+      Comprehensive Java EE/SQL-based open PLM, surfaced independently in
+      two forum discussions (2017, and via a "self-hosted Autodesk Vault
+      alternative" search angle in §14.3) as known prior art. No FreeCAD-
+      specific plugin or integration ever confirmed.
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §10.5, §14.3"
+
+  # ---------------------------------------------------------------------
+  # Projects — §10.6 Real-time / concurrent multi-user editing
+  # ---------------------------------------------------------------------
+
+  - id: project:collaborativefc-ocp
+    type: project
+    name: "CollaborativeFC / OCP (Stefan Tröger)"
+    category: [real-time-collab]
+    technical_approach: [p2p-crdt]
+    status: dead
+    status_as_of: "2026-05-01"
+    scope: freecad-native
+    origin_country: unknown
+    origin_language: unknown
+    license: unknown
+    first_seen: unknown
+    note: >
+      Archived May 2026. Author (ickby / Stefan Tröger) personally showed up
+      in PR #26306's comments in 2025 raising the identity-verification
+      question — direct continuity between the "dead" 2020s real-time-
+      editing era and the 2026 collaboration-framework effort.
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §10.6; freecad_core_and_lens_collaboration_issues.md §8.5"
+
+  - id: project:jupytercad
+    type: project
+    name: "JupyterCAD"
+    category: [real-time-collab]
+    technical_approach: [p2p-crdt]
+    status: active
+    status_as_of: "2026-09-13"
+    scope: multi-cad-platform
+    origin_country: unknown
+    origin_language: unknown
+    license: unknown
+    first_seen: unknown
+    note: >
+      The only project in the whole census with genuine real-time CRDT
+      sync — via a parallel .jcad format rather than editing .FCStd
+      directly.
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §10.6"
+
+  # ---------------------------------------------------------------------
+  # Projects — §10.7 cadracks-project's "Open Product Model"
+  # ---------------------------------------------------------------------
+
+  - id: project:cadracks-opm
+    type: project
+    name: "Open Product Model (cadracks-project/opm)"
+    category: [pdm, plm]
+    technical_approach: [sql-database]
+    status: dead
+    status_as_of: "2021-02-09"
+    scope: opencascade-generic
+    origin_country: unknown
+    origin_language: unknown
+    license: unknown
+    first_seen: "2018"
+    note: >
+      Real design substance (cited academic reference, MySQL Workbench
+      data-model file, slide deck, two design PDFs) toward an open PDM data
+      schema for open-hardware PLM — comparable in intent to the AAS/
+      VDI-2770 work, done independently, never implemented in code, and
+      completely forgotten by 2026's FEP-0011/Ondsel-Server#48
+      participants. "The clearest example... of real intellectual effort...
+      done years earlier, independently, and now essentially lost."
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §10.7"
+
+  # ---------------------------------------------------------------------
+  # Projects — §10.10 Open Source Ecology cluster
+  # ---------------------------------------------------------------------
+
+  - id: person:ose-org
+    type: person
+    handles: {github: OpenSourceEcology}
+    affiliations: ["Open Source Ecology (Marcin Jakubowski's open-hardware Global Village Construction Set project)"]
+    note: >
+      Institutional "person" node (an org, not an individual) — the third
+      instance of the single-maintainer-cluster pattern (§10.9), at
+      institutional rather than individual scale.
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §10.9, §10.10"
+
+  - id: project:ose-vcs-library
+    type: project
+    name: "OpenSourceEcology/vcs-library"
+    category: [pdm, bom]
+    technical_approach: [other]
+    status: active
+    status_as_of: "2026-09-07"
+    scope: multi-cad-platform
+    origin_country: US
+    origin_language: EN
+    license: unknown
+    first_seen: "2026-09-07"
+    note: >
+      Schema-driven, validated, versioned part-library: parts -> modules ->
+      assemblies -> structures hierarchy, strikingly similar to Ondsel-
+      Server#48's own part/assembly/sub-assembly vocabulary, arrived at
+      completely independently — see independently_reinvents edge below.
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §10.10"
+
+  - id: project:ose-library-workbench
+    type: project
+    name: "OpenSourceEcology/ose-library-workbench"
+    category: [pdm]
+    technical_approach: [other]
+    status: active
+    status_as_of: "2026-09-07"
+    scope: freecad-native
+    origin_country: US
+    origin_language: EN
+    license: unknown
+    first_seen: "2026-09-07"
+    note: >
+      FreeCAD 1.x workbench for authoring/validating OSE part-library
+      entries, with real transactional/rollback compile semantics. Saved
+      .FCStd documents carry back-references to library location, entry
+      identity, and last-applied schema — a concrete instance of "item
+      identity that outlives a file."
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §10.10"
+
+  - id: project:ose-library-site
+    type: project
+    name: "OpenSourceEcology/ose-library-site"
+    category: [bom, cloud-sharing]
+    technical_approach: [other]
+    status: active
+    status_as_of: "2026-09-07"
+    scope: freecad-native
+    origin_country: US
+    origin_language: EN
+    license: unknown
+    first_seen: "2026-09-07"
+    note: "Publishing leg of the same three-repo OSE system: entry pages with 3D views, BOMs, fab drawings, validation status."
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §10.10"
+
+  # ---------------------------------------------------------------------
+  # Projects — §11.1/§11.2 academic connectors
+  # ---------------------------------------------------------------------
+
+  - id: person:soemantoro
+    type: person
+    handles: {academic: "Raska Soemantoro"}
+    affiliations: ["University of Manchester / UK Fusion CDT"]
+    note: "Author of the FreeCAD-Omniverse connector paper and project."
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §11.1"
+
+  - id: project:freecad-omniverse-connector
+    type: project
+    name: "FreeCAD-Omniverse Connector (Metaverse-Colab-for-Fusion-Energy)"
+    category: [real-time-collab, cloud-sharing]
+    technical_approach: [server-checkin-checkout]
+    status: active
+    status_as_of: "2026-06-24"
+    scope: opencascade-generic
+    origin_country: GB
+    origin_language: EN
+    license: "BSD-3-Clause"
+    first_seen: "2023-10-31"
+    note: >
+      Peer-reviewed (Journal of Open Research Software, 2025), funded by
+      EUROfusion/EPSRC/UKAEA. Dual-format storage (STEP authoritative + USD
+      proxy), Omniverse checkpoint-based version tagging, one-directional
+      live-assembly streaming. Never appears in any FreeCAD-org or Ondsel-
+      Server discussion. Checkpoint/token model is part of the "lock, don't
+      merge" pattern — see independently_reinvents edges below.
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §11.1"
+
+  - id: project:speckle-opencascade
+    type: project
+    name: "Speckle <-> OpenCascade connector (ENAC-CNPA/speckle-opencascade)"
+    category: [cloud-sharing, academic-connector]
+    technical_approach: [other]
+    status: active
+    status_as_of: "2026-03-23"
+    scope: opencascade-generic
+    origin_country: CH
+    origin_language: EN
+    license: unknown
+    first_seen: "2024-10-07"
+    note: >
+      EPFL/ETH Board-funded prototype connector between Speckle (open AEC
+      data platform) and OpenCascade. FreeCAD is named as the explicit
+      future target, not yet built. Zero visibility in any FreeCAD-org
+      conversation despite Speckle itself being namechecked (without a
+      link) by marcuspollio in the FEP-0011 discussion.
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §11.2; freecad_core_and_lens_collaboration_issues.md §8.6"
+
+  # ---------------------------------------------------------------------
+  # Projects — §11.3 Browser/WASM ports
+  # ---------------------------------------------------------------------
+
+  - id: project:freecad-web-virtastic
+    type: project
+    name: "freecad-web (Virtastic/freecad-web)"
+    category: [browser-port]
+    technical_approach: [other]
+    status: active
+    status_as_of: "2026-09-13"
+    scope: freecad-native
+    origin_country: unknown
+    origin_language: unknown
+    license: unknown
+    first_seen: "2026-07-02"
+    note: "Full FreeCAD compiled to WebAssembly (wasm64 + JSPI) — same workbenches, commands, OCCT kernel, CPython."
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §11.3"
+
+  - id: project:magiknet-freecad-port
+    type: project
+    name: "magik.net FreeCAD port"
+    category: [browser-port]
+    technical_approach: [other]
+    status: active
+    status_as_of: "2026-09-13"
+    scope: freecad-native
+    origin_country: unknown
+    origin_language: unknown
+    license: unknown
+    first_seen: unknown
+    note: >
+      Independent WASM port; per its own writeup, built "almost entirely by
+      an AI agent (Fable/Claude Code) across 4 days, 3 sessions, 15 multi-
+      agent workflows, and 159 sub-agent invocations."
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §11.3"
+
+  # ---------------------------------------------------------------------
+  # Projects — §11.4 Cloud-storage-access workbenches
+  # ---------------------------------------------------------------------
+
+  - id: project:freecad-cloud-browser-hitclawagent
+    type: project
+    name: "freecad-cloud-browser (hitclawagent/freecad-cloud-browser)"
+    category: [cloud-sharing]
+    technical_approach: [other]
+    status: dead
+    status_as_of: "2026-05-07"
+    scope: freecad-native
+    origin_country: unknown
+    origin_language: unknown
+    license: unknown
+    first_seen: "2026-05-04"
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §11.4"
+
+  - id: project:freecad-cloud-browser-sabi137032
+    type: project
+    name: "freecad-cloud-browser (sabi137032/freecad-cloud-browser)"
+    category: [cloud-sharing]
+    technical_approach: [other]
+    status: active
+    status_as_of: "2026-09-13"
+    scope: freecad-native
+    origin_country: unknown
+    origin_language: unknown
+    license: unknown
+    first_seen: "2026-05-07"
+    note: "Same name, overlapping feature set as hitclawagent's repo, created 3 days later, no visible relationship between the authors."
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §11.4"
+
+  # ---------------------------------------------------------------------
+  # Projects — §12.3 international sweep
+  # ---------------------------------------------------------------------
+
+  - id: project:uesoft-autopdms
+    type: project
+    name: "UESOFT AutoPDMS -> FreeCAD port (gitee.com/FreeCAD org)"
+    category: [pdm]
+    technical_approach: unknown
+    status: unknown
+    status_as_of: "2026-09-13"
+    scope: freecad-native
+    origin_country: CN
+    origin_language: ZH
+    license: unknown
+    first_seen: unknown
+    note: >
+      Real, established Chinese engineering-software company (UESOFT,
+      founded 2000; AutoPDMS claims ~50% share of China's piping hanger/
+      support design software market) states an intent to port AutoPDMS to
+      FreeCAD/OpenCascade, but the visible repo evidence under
+      gitee.com/FreeCAD is SALOME-platform mirroring, not a shipped FreeCAD
+      PDM addon yet. Ambiguous/unconfirmed current state.
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §12.3"
+
+  # ---------------------------------------------------------------------
+  # Projects — §13 OCCT-specific ecosystem
+  # ---------------------------------------------------------------------
+
+  - id: project:ifcopenshell
+    type: project
+    name: "IfcOpenShell"
+    category: [real-time-collab, bom]
+    technical_approach: [other]
+    status: active
+    status_as_of: "2026-09-13"
+    scope: opencascade-generic
+    origin_country: unknown
+    origin_language: unknown
+    license: unknown
+    first_seen: unknown
+    note: >
+      Has real BCF support (BCF-XML 2.1/3.0, BCF-API 3.0) — same standard
+      FEP-0011 aligns with. No additional PDM/version-control layer beyond
+      BCF itself found.
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §13.3"
+
+  - id: project:plmore
+    type: project
+    name: "PLMore (github.com/PLMore/PLMore)"
+    category: [plm]
+    technical_approach: unknown
+    status: unknown
+    status_as_of: "2026-09-13"
+    scope: unknown
+    origin_country: unknown
+    origin_language: unknown
+    license: unknown
+    first_seen: unknown
+    note: >
+      Unresolved sighting only — "your non mega-corporate Open source PLM."
+      Relationship to OCCT/FreeCAD not confirmed; do not cite as
+      FreeCAD/OCCT-relevant without independent verification.
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §13.4"
+
+  # ---------------------------------------------------------------------
+  # Projects — §14 English terminology sweep
+  # ---------------------------------------------------------------------
+
+  - id: project:comet-cdp4
+    type: project
+    name: "COMET / CDP4-COMET (STARIONGROUP)"
+    category: [pdm, real-time-collab]
+    technical_approach: [server-checkin-checkout]
+    status: active
+    status_as_of: "2026-09-13"
+    scope: opencascade-generic
+    origin_country: unknown
+    origin_language: unknown
+    license: "open-source (exact SPDX not confirmed)"
+    first_seen: unknown
+    note: >
+      Model-Based Systems Engineering / concurrent-engineering tool
+      implementing ECSS-E-TM-10-25, officially adopted by ESA in 2022 for
+      its Concurrent Design Facility. No FreeCAD/OpenCascade integration
+      found or confirmed. The single most mature "many engineers, one
+      shared model, real-time" platform in the entire census, from a
+      discipline (systems engineering) this research's own vocabulary
+      search never thought to check.
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §14.1"
+
+  - id: project:anchorpoint
+    type: project
+    name: "Anchorpoint"
+    category: [version-control, pdm]
+    technical_approach: [git]
+    status: active
+    status_as_of: "2026-09-13"
+    scope: multi-cad-platform
+    origin_country: unknown
+    origin_language: unknown
+    license: "proprietary"
+    first_seen: unknown
+    note: >
+      Commercial "git for CAD" product with an explicit FreeCAD workflow
+      guide — automatic file-locking on .FCStd binaries layered on git, the
+      "lock, don't prevent" pattern also seen in EasyPDM and the Omniverse
+      connector's checkpoint model.
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §14.2"
+
+  # ---------------------------------------------------------------------
+  # Discussion nodes — Stage 3
+  # ---------------------------------------------------------------------
+
+  - id: discussion:forum-t62080
+    type: discussion
+    name: "'Tracking FreeCAD collaboration tools' forum thread (t=62080)"
+    platform: "forum.freecad.org"
+    span: "started 2021-09-09 by Kunda1, continuously updated"
+    status_as_of: "2026-09-13"
+    note: >
+      Ties together more of the census than any single GitHub search —
+      confirms CADCloud=vejmarie, CollaborativeFC=ickby (with ickby's own
+      2021 alpha-tester invitation post), and lists a wider adjacent
+      ecosystem (Speckle flagged by bernd in 2021, three years before the
+      EPFL/ETH prototype).
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §16.3"
+
+  - id: discussion:forum-2010-openplm-announcement
+    type: discussion
+    name: "openPLM FreeCAD-plugin announcement thread (2010)"
+    platform: "forum.freecad.org"
+    status_as_of: "2010-09-14"
+    note: >
+      Philippe (openPLM) posts asking for a sample part; wmayer, yorik, and
+      jriegel all reply enthusiastically — first-ever FreeCAD/PDM
+      integration to ship working code.
+    source_doc: "freecad_core_and_lens_collaboration_issues.md §0"
+
+  - id: discussion:forum-2014-eukreign-thread
+    type: discussion
+    name: "'Project Management/Collaboration for FreeCAD' forum thread (2014)"
+    platform: "forum.freecad.org"
+    status_as_of: "2014"
+    source_doc: "freecad_core_and_lens_collaboration_issues.md §0"
+
+  - id: discussion:forum-2017-malkov-thread
+    type: discussion
+    name: "Malkov's PLM/PDM proposal forum thread (2017)"
+    platform: "forum.freecad.org"
+    status_as_of: "2017"
+    source_doc: "freecad_core_and_lens_collaboration_issues.md §0; freecad_pdm_plm_ecosystem_census.md §10.5"
+
+  - id: discussion:forum-2020-openfablab-post
+    type: discussion
+    name: "openfablab's UUID-sidecar PDM design post (2020)"
+    platform: "forum.freecad.org"
+    status_as_of: "2020"
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §16.3a"
+
+  - id: discussion:forum-2021-thomas-neemann-post
+    type: discussion
+    name: "thomas-neemann's sidecar-text-file proposal (2021)"
+    platform: "forum.freecad.org"
+    status_as_of: "2021"
+    source_doc: "freecad_pdm_plm_ecosystem_census.md §16.3a"
+
+edges:
+
+  # --- same_author ---
+
+  - type: same_author
+    from: person:pieterhijma
+    to:
+      - project:fep-0011
+      - project:pr-26306
+      - project:issue-25681-cluster
+      - project:pr-28312
+      - project:fep-0013
+    confidence: confirmed
+    source: "freecad_core_and_lens_collaboration_issues.md §1-9 (cross-ref §10.9 of the census)"
+
+  - type: same_author
+    from: person:alekssadowski95
+    to:
+      - project:nanoplm
+      - project:freebom
+      - project:we-have-pdm-at-home
+      - project:openpartslibrary
+      - project:pypdm
+    confidence: confirmed
+    source: "freecad_pdm_plm_ecosystem_census.md §10.9"
+
+  - type: same_author
+    from: person:grd
+    to: [project:freepdm]
+    confidence: confirmed
+    source: "freecad_pdm_plm_ecosystem_census.md §16.1"
+
+  - type: same_author
+    from: person:podestplatz
+    to: [project:bcf-plugin-freecad]
+    confidence: confirmed
+    source: "freecad_core_and_lens_collaboration_issues.md §7"
+
+  - type: contributes_to
+    from: person:dan-miel
+    to: project:freepdm
+    note: >
+      Not the original author. Joined mid-2022, contributed real SolidWorks-
+      PDM operational knowledge, tried to help code it, "gave up" (his own
+      words, citing database-skill limits), then continued as a multi-year
+      design-feedback contributor. Retrofitted from a same_author workaround
+      (Stage 1 pilot) to contributes_to at the Stage 2 taxonomy freeze —
+      this is exactly the case that edge type was added for.
+    confidence: confirmed
+    source: "freecad_pdm_plm_ecosystem_census.md §16.1, §16.2 Phase 3-4"
+
+  # --- cites_as_prior_art ---
+
+  - type: cites_as_prior_art
+    from: project:fep-0011
+    to: project:bcf-plugin-freecad
+    confidence: confirmed
+    source: "freecad_core_and_lens_collaboration_issues.md §8.3 (Motivation section, 'Current known initiatives')"
+
+  - type: cites_as_prior_art
+    from: project:fep-0011
+    to: project:freepdm
+    confidence: confirmed
+    source: "freecad_core_and_lens_collaboration_issues.md §8.3 (Motivation section)"
+
+  - type: cites_as_prior_art
+    from: project:fep-0011
+    to: project:nanoplm
+    confidence: confirmed
+    source: "freecad_core_and_lens_collaboration_issues.md §8.3 (Motivation section)"
+
+  - type: cites_as_prior_art
+    from: project:issue-25681-cluster
+    to: project:ondsel-server
+    confidence: confirmed
+    note: "#25681's own problem statement cites the existence of a Lens server as its motivating context."
+    source: "freecad_core_and_lens_collaboration_issues.md §1 (Body)"
+
+  - type: cites_as_prior_art
+    from: person:wmayer
+    to: project:openplm
+    confidence: confirmed
+    note: "wmayer posted four old forum links to openPLM inside the FreePDM thread, early in Phase 2."
+    source: "freecad_pdm_plm_ecosystem_census.md §16.2 Phase 2"
+
+  # --- rejected_in_favor_of ---
+
+  - type: rejected_in_favor_of
+    from: project:freepdm
+    to: null
+    reason: >
+      grd examined SnowFS (purpose-built VCS for large binary/3D files) and
+      concluded its git-like internals wouldn't suit FCStd's zip-based
+      format.
+    chose_instead: >
+      No specific competing project was adopted; the rejection reinforced
+      the pivot already underway toward a bespoke SFTP/filesystem-permission
+      approach (Phase 4 below).
+    confidence: confirmed
+    source: "freecad_pdm_plm_ecosystem_census.md §16.3 (SnowFS entry)"
+
+  - type: rejected_in_favor_of
+    from: project:freepdm
+    to: null
+    reason: >
+      grd explicitly rejected OpenPLM's complexity in Phase 1: "I want to
+      make a 'poor man's' PDM... I don't care about fancy stuff, such as
+      what OpenPLM is about."
+    chose_instead: >
+      A KISS SVN+SQLite design (itself later abandoned for the bespoke
+      filesystem approach in Phase 4 — see the next edge).
+    confidence: confirmed
+    source: "freecad_pdm_plm_ecosystem_census.md §16.2 Phase 1"
+
+  - type: rejected_in_favor_of
+    from: project:freepdm
+    to: null
+    reason: >
+      Phase 4: grd abandoned the SVN/git-as-substrate framing entirely.
+      Zolko directly challenged this as wheel-reinvention ("Why don't you
+      choose an existing one") and grd's answer was that he needed to
+      control filesystem semantics himself, not that any specific competing
+      tool was chosen instead.
+    chose_instead: >
+      A custom SFTP/SSH virtual filesystem with numbered file-revision
+      suffixes (blah.FCStd.000, .001, ...) and directory-permission-mode
+      tricks (0700 checked-out / 0555 read-only) for check-out/check-in
+      semantics.
+    confidence: confirmed
+    source: "freecad_pdm_plm_ecosystem_census.md §16.2 Phase 4"
+
+  # --- superseded_by ---
+
+  - type: superseded_by
+    from: discussion:freecad-issue-5539
+    to: project:freecad-parts-library
+    note: >
+      Closed 2023-10-23 "as replaced by Component Library" — a real but much
+      narrower answer than Riegel's original 2009 UUID/revision-control/
+      HTTP-discovery vision: a shared macro/part-file repository, no UUID
+      scheme, no revision control beyond whatever git provides, no resource
+      discovery framework. Modeled as its own node starting at Stage 3 (the
+      pilot deferred this).
+    confidence: confirmed
+    source: "freecad_core_and_lens_collaboration_issues.md §0"
+
+  # --- independently_reinvents ---
+
+  - type: independently_reinvents
+    from: discussion:freecad-issue-5539
+    to: discussion:ondsel-server-48
+    shared_idea: >
+      A UUID-based stable item identity, a central repository with revision
+      control, and HTTP-accessible resource discovery — Riegel's 2009
+      sketch and the FEP-0011/Ondsel-Server#48 item/document/version
+      vocabulary (2025-2026) re-derive essentially the same core ideas 16
+      years apart, apparently without either side citing ticket #5539.
+    confidence: inferred
+    source: "freecad_core_and_lens_collaboration_issues.md §0 ('Why this matters')"
+
+  - type: independently_reinvents
+    from: discussion:ondsel-server-48
+    to: standard:vdi-2770-aas
+    shared_idea: >
+      Ondsel-Server#48's item/document/version vocabulary and its invented
+      "meta-document" concept match, nearly term for term, VDI 2770's
+      Document/DocumentVersion split and the AAS Handover Documentation
+      submodel's Entities/Hierarchical-Structures pattern — arrived at
+      independently by pierreporte/pieterhijma without reference to the
+      standard.
+    confidence: confirmed
+    note: >
+      Marked confirmed rather than the usual inferred default for this edge
+      type because the correspondence is explicitly drawn out, term by
+      term, in a primary-source comment on the issue itself (not this
+      research's own pattern-matching).
+    source: "freecad_core_and_lens_collaboration_issues.md §5, comment 5.1"
+
+  - type: independently_reinvents
+    from: project:issue-25681-cluster
+    to: project:openpartslibrary
+    shared_idea: >
+      Both independently propose a UUID/stable-identity part-library layer
+      that other PDM/PLM tools can build on top of; not cross-referenced by
+      either side in the source docs.
+    confidence: inferred
+    note: >
+      Weaker/more speculative than the other independently_reinvents edges
+      in this pilot — included to test whether the taxonomy handles a
+      lower-confidence case; see results doc's taxonomy-fit notes.
+    source: "freecad_pdm_plm_ecosystem_census.md §10.4, §10.9"
+
+  # --- aware_of_uncoordinated ---
+
+  - type: aware_of_uncoordinated
+    from: project:freepdm
+    to: project:ondsel-server
+    confidence: confirmed
+    note: >
+      FreePDM's own thread, final (second-to-last) post: "does you work
+      base on ondsel or another Opensource PDM?" — grd's reply sidesteps
+      the question and never actually answers it. This is the closest
+      direct link found between the two communities: aware of each other
+      by name, no evidence of coordination.
+    source: "freecad_pdm_plm_ecosystem_census.md §16.2 Phase 6, §16.4"
+
+  # --- shares_standard ---
+
+  - type: shares_standard
+    from: project:fep-0011
+    to: project:bcf-plugin-freecad
+    standard: standard:bcf
+    confidence: confirmed
+    note: >
+      FEP-0011 explicitly aligns with BCF v3.0 and names the BCF plugin as
+      one of the "known initiatives" it intends to let be rebuilt on top of
+      the new framework.
+    source: "freecad_core_and_lens_collaboration_issues.md §8.3 (Rationale)"
+
+  - type: shares_standard
+    from: discussion:ondsel-server-48
+    to: standard:vdi-2770-aas
+    standard: standard:vdi-2770-aas
+    confidence: confirmed
+    source: "freecad_core_and_lens_collaboration_issues.md §5, comment 5.1"
+
+  # --- mentors ---
+
+  - type: mentors
+    from: person:yorikvanhavre
+    to: person:podestplatz
+    scoped_to: project:bcf-plugin-freecad
+    confidence: confirmed
+    source: "freecad_core_and_lens_collaboration_issues.md §7"
+
+  - type: mentors
+    from: person:hardeeprai
+    to: person:podestplatz
+    scoped_to: project:bcf-plugin-freecad
+    confidence: confirmed
+    source: "freecad_core_and_lens_collaboration_issues.md §7"
+
+  # --- discussed_in ---
+
+  - type: discussed_in
+    from: project:freepdm
+    to: discussion:about-pdm-for-freecad
+    confidence: confirmed
+    source: "freecad_pdm_plm_ecosystem_census.md §16"
+
+  - type: discussed_in
+    from: project:bcf-plugin-freecad
+    to: discussion:bcf-gsoc-proposal-thread
+    confidence: confirmed
+    source: "freecad_core_and_lens_collaboration_issues.md §7"
+
+  - type: discussed_in
+    from: project:fep-0011
+    to: discussion:fep-0011-discussion-40
+    confidence: confirmed
+    source: "freecad_core_and_lens_collaboration_issues.md §8.6"
+
+  - type: discussed_in
+    from: project:issue-25681-cluster
+    to: discussion:freecad-issue-5539
+    confidence: inferred
+    note: >
+      Not a direct citation — #25681/FEP-0011 never cite ticket #5539 — but
+      both are "discussed_in" the same lineage of FreeCAD-org collaboration
+      tickets; included to keep the prehistory reachable from the main
+      cluster in graph traversal. Marked inferred because the link is this
+      research's own framing, not a stated relationship.
+    source: "freecad_core_and_lens_collaboration_issues.md §0 (table of contents framing)"
+
+  # --- forked_from / mirror_of ---
+
+  - type: forked_from
+    from: person:jee-bee
+    to: project:freepdm
+    note: >
+      Jee-Bee maintained a parallel exploratory fork
+      (github.com/Jee-Bee/FreePDM/tree/conceptod) of grd's FreePDM repo —
+      modeled as person→project since the fork itself isn't separately
+      catalogued as a project node in this pilot.
+    confidence: confirmed
+    source: "freecad_pdm_plm_ecosystem_census.md §16.1"
+
+  # =========================================================================
+  # STAGE 3 edges — extending the pilot edge set above using the frozen v1
+  # taxonomy (including contributes_to and rejected_in_favor_of's
+  # chose_instead field).
+  # =========================================================================
+
+  # --- same_author (Stage 3) ---
+
+  - type: same_author
+    from: person:ose-org
+    to:
+      - project:ose-vcs-library
+      - project:ose-library-workbench
+      - project:ose-library-site
+    confidence: confirmed
+    note: >
+      Third instance of the single-maintainer-cluster pattern, at
+      institutional rather than individual scale — a coordinated,
+      internally-consistent three-repo push on 2026-09-07.
+    source: "freecad_pdm_plm_ecosystem_census.md §10.9, §10.10"
+
+  - type: same_author
+    from: project:cascadia-app
+    to: [project:cascadia-freecad-connector]
+    confidence: inferred
+    note: >
+      Modeled as a project-to-project "belongs to the same product family"
+      relationship rather than a strict person→project same_author edge,
+      since the individual maintainer(s) weren't identified in the source;
+      Cascadia-App is the kernel-agnostic core, the Connector is its
+      FreeCAD-side bridge, both under the Cascadia-PLM GitHub org.
+    source: "freecad_pdm_plm_ecosystem_census.md §10.1, §13.1"
+
+  - type: same_author
+    from: person:ickby
+    to: [project:collaborativefc-ocp]
+    confidence: confirmed
+    source: "freecad_pdm_plm_ecosystem_census.md §10.6"
+
+  - type: same_author
+    from: person:vejmarie
+    to: [project:cadcloud]
+    confidence: confirmed
+    source: "freecad_pdm_plm_ecosystem_census.md §16.3"
+
+  - type: same_author
+    from: person:soemantoro
+    to: [project:freecad-omniverse-connector]
+    confidence: confirmed
+    source: "freecad_pdm_plm_ecosystem_census.md §11.1"
+
+  # --- contributes_to (Stage 3) ---
+
+  - type: contributes_to
+    from: person:heda
+    to: project:freepdm
+    note: >
+      Consistent design-philosophy voice throughout the thread, not a code
+      author; created the official PDM_Roadmap wiki placeholder pointing
+      back into the thread.
+    confidence: confirmed
+    source: "freecad_pdm_plm_ecosystem_census.md §16.1"
+
+  - type: contributes_to
+    from: person:zolko
+    to: project:freepdm
+    note: "Brought production SVN/TeamCenter experience; repeatedly challenged design choices (see rejected_in_favor_of edges)."
+    confidence: confirmed
+    source: "freecad_pdm_plm_ecosystem_census.md §16.1, §16.2 Phase 4"
+
+  - type: contributes_to
+    from: person:user1234
+    to: project:freepdm
+    note: "Most prolific early technical debater on VCS choice; see independently_reinvents edge to thomas-neemann's 2021 thread below for the same person's earlier, independent circulation of a related design position."
+    confidence: confirmed
+    source: "freecad_pdm_plm_ecosystem_census.md §16.1, §16.2 Phase 1"
+
+  - type: contributes_to
+    from: person:pierreporte
+    to: project:ondsel-server
+    note: "Co-developed the item/document/version/meta-document vocabulary with pieterhijma on Ondsel-Server#48; also weighed in on FEP-0011's discussion #40."
+    confidence: confirmed
+    source: "freecad_core_and_lens_collaboration_issues.md §5, §8.6"
+
+  - type: contributes_to
+    from: person:creymore
+    to: project:ondsel-server
+    confidence: confirmed
+    source: "freecad_core_and_lens_collaboration_issues.md §1.5, §2.3, §6"
+
+  # --- cites_as_prior_art (Stage 3) ---
+
+  - type: cites_as_prior_art
+    from: project:fep-0011
+    to: project:cadbaselibrary
+    confidence: confirmed
+    source: "freecad_core_and_lens_collaboration_issues.md §8.3 (Motivation section)"
+
+  - type: cites_as_prior_art
+    from: project:fep-0011
+    to: project:taack-plm
+    confidence: confirmed
+    source: "freecad_core_and_lens_collaboration_issues.md §8.3 (Motivation section)"
+
+  - type: cites_as_prior_art
+    from: project:fep-0011
+    to: project:ondsel-lens-addon
+    confidence: confirmed
+    note: "Listed among the Motivation section's 'current known initiatives,' alongside Ondsel Server itself."
+    source: "freecad_core_and_lens_collaboration_issues.md §8.3 (Motivation section)"
+
+  - type: cites_as_prior_art
+    from: project:ifcopenshell
+    to: standard:bcf
+    confidence: confirmed
+    source: "freecad_pdm_plm_ecosystem_census.md §13.3"
+
+  - type: cites_as_prior_art
+    from: person:openfablab
+    to: project:openplm
+    confidence: confirmed
+    note: >
+      openfablab's 2020 proposal explicitly rejects server-based solutions
+      "(OpenPLM et al.)" as too heavy, in favor of the UUID-sidecar
+      filesystem-native design — a citation-as-rejection, distinct from the
+      independently_reinvents edges below which track ideas arrived at
+      without citation.
+    source: "freecad_pdm_plm_ecosystem_census.md §16.3a"
+
+  # --- rejected_in_favor_of (Stage 3) ---
+
+  - type: rejected_in_favor_of
+    from: person:openfablab
+    to: project:openplm
+    reason: "Explicitly rejected server-based PLM solutions (OpenPLM et al.) as too heavy for the use case."
+    chose_instead: >
+      A lightweight, UUID-based, filesystem-native PLM built around a small
+      info.plm JSON sidecar file per part/assembly folder.
+    confidence: confirmed
+    source: "freecad_pdm_plm_ecosystem_census.md §16.3a"
+
+  # --- superseded_by (Stage 3) ---
+  # (none new — the pilot's single superseded_by edge, now pointed at
+  # project:freecad-parts-library, remains the only instance found.)
+
+  # --- independently_reinvents (Stage 3) ---
+
+  - type: independently_reinvents
+    from: person:openfablab
+    to: person:thomas-neemann
+    shared_idea: >
+      Both (2020 and 2021 respectively) propose pairing FreeCAD parts/files
+      with sidecar metadata (a JSON UUID-identity file vs. a searchable text
+      file) rather than embedding identity/metadata in the FreeCAD file
+      itself or a database — the "stable identity/metadata outside the
+      file" pattern, arrived at independently one year apart in the same
+      forum section.
+    confidence: inferred
+    source: "freecad_pdm_plm_ecosystem_census.md §16.3a"
+
+  - type: independently_reinvents
+    from: person:thomas-neemann
+    to: project:freepdm
+    shared_idea: >
+      thomas-neemann's 2021 sidecar-file/search-index proposal predates
+      FreePDM's 2022 genesis thread by six months; person:user1234 appears
+      in both, arguing the identical PostgreSQL-for-locking position in
+      each — the clearest three-way "independently reinvents, one person
+      unknowingly carrying the idea across threads" case in this census.
+    confidence: confirmed
+    note: >
+      Marked confirmed rather than the usual inferred default because
+      user1234's continuity across the two threads is directly traceable in
+      the primary sources, not this research's own pattern-matching.
+    source: "freecad_pdm_plm_ecosystem_census.md §16.3a"
+
+  - type: independently_reinvents
+    from: project:ose-vcs-library
+    to: discussion:ondsel-server-48
+    shared_idea: >
+      OSE's parts -> modules -> assemblies -> structures hierarchy and
+      Ondsel-Server#48's item/part/assembly/sub-assembly vocabulary are
+      strikingly similar part-of hierarchies, arrived at completely
+      independently — no reference to Lens, FreePDM, nanoPLM,
+      HistoryWorkbench, or FEP-0011 found anywhere in OSE's docs.
+    confidence: inferred
+    source: "freecad_pdm_plm_ecosystem_census.md §10.10"
+
+  - type: independently_reinvents
+    from: project:historyworkbench
+    to: project:pr-28312
+    shared_idea: >
+      Both solve "make .FCStd git-friendly," from opposite directions —
+      HistoryWorkbench as an external addon, PR #28312/FEP-0013 from inside
+      FreeCAD core — the single most duplicated sub-problem in the census
+      (at least five independent external attempts: reox 2017,
+      p-friedrich/levity0815/cadracks-project all 2018, HistoryWorkbench
+      2026, plus this core-side sixth attempt).
+    confidence: inferred
+    source: "freecad_pdm_plm_ecosystem_census.md §10.2"
+
+  - type: independently_reinvents
+    from: project:freecad-gitproject-reox
+    to: project:versioncontrol-workbench-pfriedrich
+    shared_idea: "Both attempt git-based FreeCAD version control, within a year of each other (2017/2018), with no visible cross-awareness."
+    confidence: inferred
+    source: "freecad_pdm_plm_ecosystem_census.md §10.2"
+
+  - type: independently_reinvents
+    from: project:freecad-cloud-browser-hitclawagent
+    to: project:freecad-cloud-browser-sabi137032
+    shared_idea: >
+      Same name, same feature category (cloud-storage-access workbench),
+      created three days apart (2026-05-04 / 2026-05-07), no visible
+      relationship between the authors — the third confirmed instance of
+      "duplicated effort within days, same name, no cross-awareness"
+      (after HistoryWorkbench-era git tools and the Schumbi freecad-plm
+      pair), suggesting this is a structural feature of the FreeCAD addon
+      ecosystem generally, not specific to PDM.
+    confidence: confirmed
+    source: "freecad_pdm_plm_ecosystem_census.md §11.4"
+
+  - type: independently_reinvents
+    from: project:easypdm
+    to: project:anchorpoint
+    shared_idea: >
+      "Lock, don't merge" as the concurrent-edit-conflict strategy —
+      EasyPDM's item/check-out locking and Anchorpoint's automatic
+      file-locking on .FCStd binaries are the same pattern, arrived at by
+      unrelated commercial/hobbyist projects.
+    confidence: inferred
+    source: "freecad_pdm_plm_ecosystem_census.md §10.1, §14.2"
+
+  - type: independently_reinvents
+    from: project:anchorpoint
+    to: project:freecad-omniverse-connector
+    shared_idea: >
+      Anchorpoint's file-locking and the Omniverse connector's checkpoint-
+      token model are both "lock/tag, don't merge" strategies for
+      preventing (rather than resolving) concurrent-edit conflicts on large
+      binary CAD assets — a recurring, independently arrived-at pattern
+      across totally unrelated projects (commercial CAD tooling vs.
+      government-funded fusion-energy infrastructure).
+    confidence: inferred
+    source: "freecad_pdm_plm_ecosystem_census.md §14.2"
+
+  # --- aware_of_uncoordinated (Stage 3) ---
+  # (none new with primary-source support — the pilot's single edge
+  # (freepdm -> ondsel-server) remains the only case with a direct textual
+  # basis. The OdooPLM <-> FEP-0011 mutual-unawareness pattern described in
+  # census §10.8 point 4 is NOT modeled as an edge: no evidence either side
+  # is aware of the other by name, which is what this edge type requires —
+  # see results doc's taxonomy-fit note on this gap.)
+
+  # --- shares_standard (Stage 3) ---
+  # (the fep-0011 <-> bcf-plugin-freecad and ondsel-server-48 <-> vdi-2770-aas
+  # edges from the pilot remain the only shares_standard edges with a
+  # standard-node target; ifcopenshell's BCF relationship is modeled above as
+  # cites_as_prior_art since IfcOpenShell is not in conversation with
+  # FEP-0011/BCF-plugin the way those two are with each other.)
+
+  # --- mentors (Stage 3) ---
+  # (no new mentors edges found in the full census beyond the pilot's two.)
+
+  # --- discussed_in (Stage 3) ---
+
+  - type: discussed_in
+    from: project:cadcloud
+    to: discussion:forum-t62080
+    confidence: confirmed
+    source: "freecad_pdm_plm_ecosystem_census.md §16.3"
+
+  - type: discussed_in
+    from: project:collaborativefc-ocp
+    to: discussion:forum-t62080
+    confidence: confirmed
+    note: "ickby posted in this thread in 2021 inviting alpha testers with a specific reproducible test protocol."
+    source: "freecad_pdm_plm_ecosystem_census.md §16.3"
+
+  - type: discussed_in
+    from: project:openplm
+    to: discussion:forum-2010-openplm-announcement
+    confidence: confirmed
+    source: "freecad_core_and_lens_collaboration_issues.md §0"
+
+  - type: discussed_in
+    from: person:eukreign
+    to: discussion:forum-2014-eukreign-thread
+    confidence: confirmed
+    source: "freecad_core_and_lens_collaboration_issues.md §0"
+
+  - type: discussed_in
+    from: person:malkov
+    to: discussion:forum-2017-malkov-thread
+    confidence: confirmed
+    source: "freecad_core_and_lens_collaboration_issues.md §0"
+
+  - type: discussed_in
+    from: person:openfablab
+    to: discussion:forum-2020-openfablab-post
+    confidence: confirmed
+    source: "freecad_pdm_plm_ecosystem_census.md §16.3a"
+
+  - type: discussed_in
+    from: person:thomas-neemann
+    to: discussion:forum-2021-thomas-neemann-post
+    confidence: confirmed
+    source: "freecad_pdm_plm_ecosystem_census.md §16.3a"
+
+  - type: discussed_in
+    from: discussion:forum-2014-eukreign-thread
+    to: discussion:freecad-issue-5539
+    confidence: inferred
+    note: "jriegel pointed the 2014 thread's participants at wiki pages spawned by his own 2009 ticket — not a direct citation of the ticket itself, but the same lineage."
+    source: "freecad_core_and_lens_collaboration_issues.md §0"
+
+  - type: discussed_in
+    from: discussion:forum-2017-malkov-thread
+    to: discussion:freecad-issue-5539
+    confidence: inferred
+    note: "wandererfan again pointed at the same wiki page in 2017 — third round of independent rediscovery."
+    source: "freecad_core_and_lens_collaboration_issues.md §0"
+
+  # --- forked_from / mirror_of (Stage 3) ---
+  # (no new forked_from/mirror_of edges — the mnnxp/cadbaselibrary-freecad
+  # GitHub repo and the real gitlab.com/cadbase platform are folded into
+  # the single project:cadbaselibrary node rather than modeled as two nodes
+  # plus a mirror_of edge, since they're one project's two hosting
+  # locations, not two independently-authored efforts.)

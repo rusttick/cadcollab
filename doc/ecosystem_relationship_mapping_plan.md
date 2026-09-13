@@ -247,6 +247,17 @@ structured data actually revealed, backed by specific edges as citations.
 The graph file itself stays as supporting data, not the deliverable; the
 deliverable is what it lets you say that you couldn't say before.
 
+## Status update: Stage 2 frozen, Stage 3 complete (2026-09-13)
+
+The "Typed edges" table above is the **pre-freeze** taxonomy — kept here as
+historical context. The authoritative, frozen v1 taxonomy (two additions:
+`contributes_to` and `rejected_in_favor_of`'s `chose_instead` field) lives
+in a header comment block at the top of `doc/ecosystem_graph.yaml`. Stage 3
+(full extraction across both census docs) is complete; see
+`doc/ecosystem_relationship_mapping_results.md` for the final counts and
+findings. Stages 4 (focused visualizations) and 5 (synthesis document) are
+not yet started.
+
 ## Open questions to settle before Stage 1 (your call, not mine to assume)
 
 - **Should low-confidence `independently_reinvents` edges require a written
