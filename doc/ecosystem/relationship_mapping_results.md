@@ -35,11 +35,11 @@ including all issue/PR/FEP/forum content), extending the pilot's 34
 nodes/27 edges to the full census.
 
 **95 nodes**: 57 projects, 25 people, 11 discussions, 2 standards.
-**60 edges**, all 11 taxonomy types represented:
+**61 edges**, all 11 taxonomy types represented:
 
 | Edge type | Count |
 |---|---|
-| `discussed_in` | 13 |
+| `discussed_in` | 14 |
 | `independently_reinvents` | 11 |
 | `cites_as_prior_art` | 10 |
 | `same_author` | 9 |
@@ -51,8 +51,11 @@ nodes/27 edges to the full census.
 | `aware_of_uncoordinated` | 1 |
 | `forked_from` | 1 |
 
-Confidence split: 48 `confirmed`, 12 `inferred` (80/20 — similar ratio to
-the pilot). Two edges explicitly considered and rejected during extraction
+Confidence split: 49 `confirmed`, 12 `inferred`. (One `discussed_in` edge
+— `project:ondsel-server` → `discussion:ondsel-server-48` — was added after
+initial Stage 3 extraction: the alliance-analysis Stage A pass found the
+discussion node had no link to the project it's plainly about, a genuine
+gap rather than a deliberate omission.) Two edges explicitly considered and rejected during extraction
 are documented as YAML *comments*, not edges, precisely because no
 primary-source support existed: a speculative `wmayer → CADBaseLibrary`
 `cites_as_prior_art` edge, and an `OdooPLM ↔ FEP-0011` mutual-unawareness

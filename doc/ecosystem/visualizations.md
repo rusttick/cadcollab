@@ -1,6 +1,6 @@
 # Ecosystem Relationship Mapping — Stage 4 Visualizations
 
-Focused views generated from `ecosystem_graph.yaml` (95 nodes / 60 edges,
+Focused views generated from `ecosystem_graph.yaml` (95 nodes / 61 edges,
 Stage 3 full extraction), per `ecosystem_relationship_mapping_plan.md`'s
 Stage 4 instruction: multiple small purpose-built diagrams instead of one
 unreadable 30+-node graph. Each diagram below covers one relationship

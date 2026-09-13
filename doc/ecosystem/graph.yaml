@@ -49,6 +49,34 @@
 #
 # Frozen for Stage 3 (full extraction pass, below). Not revisited mid-pass.
 # ---------------------------------------------------------------------------
+#
+# NODE TYPE ADDITION — 2026-09-13 (alliance-analysis phase, post-Stage 5)
+# ---------------------------------------------------------------------------
+# NEW node type `organization`: a company, community association, or
+# open-source development firm that is the primary maintaining entity behind
+# a project, when authorship is institutional/abstracted rather than
+# attributable to a specific named individual (e.g. a project whose commits
+# and decisions are made under a firm's name rather than a personal handle).
+# Distinct from an `affiliations` string on a `person` node (which records
+# that an identified individual works for/with an org) — `organization` is
+# for when the org itself, not a person, is the right node to hold the
+# authorship/maintenance edge.
+#
+# `same_author`'s `from` may now be `organization` as well as `person` — no
+# new edge type was needed, since "created/drives" already describes the
+# relationship correctly once the subject can be collective, not just
+# individual. A project may have both a `same_author` edge from an
+# `organization` and separate `same_author`/`contributes_to` edges from any
+# individual people who are independently identifiable (e.g. named lead
+# developers) — the two aren't mutually exclusive.
+#
+# Organization nodes added so far are stubs: real entities named directly by
+# the user in conversation, not yet independently verified against a primary
+# source or populated with named lead developers. Marked `confidence:
+# unverified` (a new value, distinct from `confirmed`/`inferred`, meaning
+# "asserted outside the census docs, not yet checked against one") until a
+# verification pass fills them in.
+# ---------------------------------------------------------------------------
 
 nodes:
 
@@ -265,6 +293,38 @@ nodes:
     license: "MIT"
     first_seen: "2022-04-28"
     source_doc: "freecad_pdm_plm_ecosystem_census.md §10.1, §16"
+
+  # ---------------------------------------------------------------------
+  # Organizations
+  # ---------------------------------------------------------------------
+
+  - id: organization:linobject
+    type: organization
+    name: "LinObject"
+    org_type: "open-source development firm"
+    confidence: unverified
+    note: >
+      Named by the user as openPLM's maintaining firm, with listed lead
+      developers not yet transcribed into person nodes. Stub only.
+    source_doc: "user-provided, 2026-09-13 conversation — not yet checked against a primary source"
+
+  - id: organization:omniasolutions
+    type: organization
+    name: "OmniaSolutions"
+    org_type: "company"
+    confidence: unverified
+    note: "Named by the user as one of OdooPLM's maintaining entities. Stub only."
+    source_doc: "user-provided, 2026-09-13 conversation — not yet checked against a primary source"
+
+  - id: organization:odooplm-community-association
+    type: organization
+    name: "OdooPLM Community Association (exact name unconfirmed)"
+    org_type: "community association"
+    confidence: unverified
+    note: >
+      Named by the user as OdooPLM's other maintaining entity, alongside
+      organization:omniasolutions. Exact registered name not yet confirmed.
+    source_doc: "user-provided, 2026-09-13 conversation — not yet checked against a primary source"
 
   # ---------------------------------------------------------------------
   # Projects — openPLM lineage
@@ -1425,6 +1485,30 @@ edges:
   # --- same_author ---
 
   - type: same_author
+    from: organization:linobject
+    to: project:openplm
+    confidence: unverified
+    note: >
+      Organizational authorship, not individual — LinObject is described by
+      the user as having listed lead developers who have not yet been
+      transcribed into their own person nodes. Revisit once that
+      verification pass happens.
+    source: "user-provided, 2026-09-13 conversation — not yet checked against a primary source"
+
+  - type: same_author
+    from: organization:omniasolutions
+    to: project:odooplm
+    confidence: unverified
+    source: "user-provided, 2026-09-13 conversation — not yet checked against a primary source"
+
+  - type: same_author
+    from: organization:odooplm-community-association
+    to: project:odooplm
+    confidence: unverified
+    note: "Co-maintaining entity alongside organization:omniasolutions, per the user."
+    source: "user-provided, 2026-09-13 conversation — not yet checked against a primary source"
+
+  - type: same_author
     from: person:pieterhijma
     to:
       - project:fep-0011
@@ -1681,6 +1765,18 @@ edges:
     to: discussion:fep-0011-discussion-40
     confidence: confirmed
     source: "freecad_core_and_lens_collaboration_issues.md §8.6"
+
+  - type: discussed_in
+    from: project:ondsel-server
+    to: discussion:ondsel-server-48
+    confidence: confirmed
+    note: >
+      Structural gap found during alliance-analysis Stage A candidate
+      generation: this discussion node's own name ("Extent to which Lens is
+      a PDM") and its independently_reinvents/shares_standard edges to
+      standard:vdi-2770-aas were already anchored to project:ondsel-server
+      elsewhere, but the discussed_in edge itself was missing.
+    source: "freecad_core_and_lens_collaboration_issues.md §5"
 
   - type: discussed_in
     from: project:issue-25681-cluster

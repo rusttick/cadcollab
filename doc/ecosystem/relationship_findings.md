@@ -2,7 +2,7 @@
 
 This is the Stage 5 deliverable of `ecosystem_relationship_mapping_plan.md`
 — the synthesis the structured graph exists to support. The graph itself
-(`ecosystem_graph.yaml`, 95 nodes / 60 edges) and the six focused diagrams
+(`ecosystem_graph.yaml`, 95 nodes / 61 edges) and the six focused diagrams
 built from it (`ecosystem_visualizations.md`) are supporting data; this
 document is what that structure lets us say that the prose census docs,
 read on their own, couldn't say as sharply. Every claim below cites a
