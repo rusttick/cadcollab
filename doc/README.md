@@ -49,3 +49,11 @@ template, plus source-verified corrections applied back to
 
 Which collaboration mechanisms found across `architecture/` require a
 FreeCAD core change versus which are addon-implementable today.
+
+## global_boundary_crossing_research.md
+
+CSCW/human-factors research (awareness, common ground, boundary-object
+theory), PLM-adoption psychology, and the AEC/openBIM and
+aerospace/LOTAR precedents for regulator-inclusive multi-org
+collaboration, read against a critical assessment of what "FreeCAD as
+global market leader" would actually require and whether it's realistic.
